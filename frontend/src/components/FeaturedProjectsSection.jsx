@@ -24,30 +24,35 @@ const projects = [
         tag: "SIH 2025 Winning Project",
         description: "National-level problem-solving system.",
         githubUrl: "https://github.com",
+        category: "PROBLEM SOLVING",
     },
     {
         id: "stms",
         name: "STMS – Super Imli Traders Management System",
         description: "Custom inventory and billing system for a wholesale business.",
         githubUrl: "https://github.com",
+        category: "FULL STACK",
     },
     {
         id: "smartexam",
         name: "SmartExam",
         description: "Online examination and proctoring platform.",
         githubUrl: "https://github.com",
+        category: "FULL STACK",
     },
     {
         id: "stylescript",
         name: "StyleScript",
         description: "Smart code and document styling automation tool.",
         githubUrl: "https://github.com",
+        category: "AI / ML",
     },
     {
         id: "pharmacy",
         name: "Pharmacy Billing",
         description: "Retail medical billing system.",
         githubUrl: "https://github.com",
+        category: "FULL STACK",
     },
     {
         id: "bloomtale",
@@ -55,12 +60,14 @@ const projects = [
         description: "Creative digital content platform.",
         githubUrl: "https://github.com",
         viewUrl: "https://bloomtale.cloud/home",
+        category: "FULL STACK",
     },
     {
         id: "mindseeds",
         name: "MindSeeds",
         description: "Educational concept system.",
         githubUrl: "https://github.com",
+        category: "PROBLEM SOLVING",
     },
 ]
 
@@ -99,17 +106,17 @@ const ProjectCard = ({ project, visible, delay }) => {
                     : "translateY(24px) perspective(800px) rotateX(0deg) rotateY(0deg)",
                 transition: `opacity 0.7s ease ${delay}ms, transform ${hovered ? "0.1s" : "0.6s"} ease${hovered ? "" : ` ${delay}ms`}, box-shadow 0.3s ease`,
                 willChange: "transform",
-                /* Solid Light Background */
-                background: "#ffffff",
-                border: `1px solid ${hovered ? "rgba(37,99,235,0.15)" : "rgba(0,0,0,0.06)"}`,
+                /* Dark Background */
+                background: hovered ? "#1a1a24" : "#111116",
+                border: `1px solid ${hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)"}`,
                 borderRadius: "14px",
                 padding: "0",
                 overflow: "hidden",
                 cursor: "default",
                 /* Soft Shadow depth */
                 boxShadow: hovered
-                    ? "0 20px 60px rgba(0,0,0,0.08), 0 0 0 1px rgba(37,99,235,0.05)"
-                    : "0 4px 24px rgba(0,0,0,0.03)",
+                    ? "0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,99,235,0.1)"
+                    : "0 4px 24px rgba(0,0,0,0.2)",
             }}
         >
             {/* Blue accent line at top */}
@@ -128,7 +135,7 @@ const ProjectCard = ({ project, visible, delay }) => {
             {/* Card body */}
             <div style={{ padding: "22px 24px 24px" }}>
                 {/* Tag badge */}
-                {project.tag && (
+                {(project.tag || project.category) && (
                     <span
                         style={{
                             display: "inline-block",
@@ -144,7 +151,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                             padding: "3px 8px",
                         }}
                     >
-                        {project.tag}
+                        {project.tag || project.category}
                     </span>
                 )}
 
@@ -155,7 +162,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                         fontSize: "1rem",
                         fontWeight: 650,
                         letterSpacing: "-0.015em",
-                        color: hovered ? "#0f172a" : "#1e293b",
+                        color: hovered ? "#f8fafc" : "#e2e8f0",
                         transition: "color 0.3s ease",
                         lineHeight: 1.3,
                     }}
@@ -168,7 +175,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                     style={{
                         margin: "0 0 20px",
                         fontSize: "0.82rem",
-                        color: "#64748b",
+                        color: "#94a3b8",
                         lineHeight: 1.5,
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -214,6 +221,9 @@ const ProjectCard = ({ project, visible, delay }) => {
 const FeaturedProjectsSection = () => {
     const ref = useRef(null)
     const [visible, setVisible] = useState(false)
+    const [activeCategory, setActiveCategory] = useState("ALL PROJECTS")
+
+    const categories = ["ALL PROJECTS", "AI / ML", "BLOCKCHAIN", "FULL STACK", "PROBLEM SOLVING"]
 
     useEffect(() => {
         const el = ref.current
@@ -230,6 +240,10 @@ const FeaturedProjectsSection = () => {
         observer.observe(el)
         return () => observer.disconnect()
     }, [])
+
+    const filteredProjects = activeCategory === "ALL PROJECTS"
+        ? projects
+        : projects.filter(p => p.category === activeCategory)
 
     return (
         <>
@@ -264,15 +278,15 @@ const FeaturedProjectsSection = () => {
         .fp-btn:active { transform: translateY(0); }
         /* Ghost style — GitHub */
         .fp-btn-ghost {
-          color: #475569;
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
+          color: #94a3b8;
+          background: rgba(255,255,255,0.05);
+          border: 1px solid rgba(255,255,255,0.1);
         }
         .fp-btn-ghost:hover {
-          color: #0f172a;
-          background: #e2e8f0;
-          border-color: #cbd5e1;
-          box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+          color: #f8fafc;
+          background: rgba(255,255,255,0.1);
+          border-color: rgba(255,255,255,0.2);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
         /* Primary style — View */
         .fp-btn-primary {
@@ -286,15 +300,54 @@ const FeaturedProjectsSection = () => {
           box-shadow: 0 2px 14px rgba(37,99,235,0.2);
           color: #ffffff;
         }
+
+        /* Filter Pills - Premium Style based on reference */
+        .filter-container {
+            background: #05070a; 
+            padding: 8px;
+            border-radius: 99px;
+            display: inline-flex;
+            gap: 4px;
+            margin-bottom: 50px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+        @media (max-width: 600px) {
+            .filter-container {
+                flex-wrap: wrap;
+                border-radius: 20px;
+                justify-content: center;
+                width: 100%;
+            }
+        }
+        .ref-pill {
+            padding: 10px 24px;
+            border-radius: 99px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #94a3b8;
+            border: 1px solid transparent;
+            white-space: nowrap;
+        }
+        .ref-pill:hover {
+            color: #f8fafc;
+        }
+        .ref-pill.active {
+            background: #ffffff;
+            color: #000000 !important;
+        }
       `}</style>
 
             <section
                 ref={ref}
                 id="featured-projects"
                 style={{
-                    backgroundColor: "#f8fafc",
+                    backgroundColor: "#09090b",
                     padding: "120px 7vw",
-                    borderTop: "1px solid rgba(0,0,0,0.05)",
+                    borderTop: "1px solid rgba(255,255,255,0.03)",
                 }}
             >
                 {/* Section header */}
@@ -303,7 +356,7 @@ const FeaturedProjectsSection = () => {
                         opacity: visible ? 1 : 0,
                         transform: visible ? "translateY(0)" : "translateY(16px)",
                         transition: "opacity 0.8s ease, transform 0.8s ease",
-                        marginBottom: "64px",
+                        marginBottom: "48px",
                     }}
                 >
                     <p
@@ -319,24 +372,48 @@ const FeaturedProjectsSection = () => {
                         Our Work
                     </p>
                     <h2
+                        className="text-transparent bg-clip-text"
                         style={{
                             margin: 0,
                             fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)",
                             fontWeight: 700,
                             letterSpacing: "-0.03em",
-                            background: "linear-gradient(160deg, #0f172a 50%, #334155 100%)",
+                            backgroundImage: "linear-gradient(160deg, #f8fafc 50%, #94a3b8 100%)",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
-                            backgroundClip: "text",
                         }}
                     >
                         Featured Projects
                     </h2>
                 </div>
 
+                {/* Filter Navigation - Using Reference Image Style */}
+                <div
+                    style={{
+                        opacity: visible ? 1 : 0,
+                        transform: visible ? "translateY(0)" : "translateY(16px)",
+                        transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
+                        display: "flex",
+                        justifyContent: "flex-start",
+                        marginBottom: "30px"
+                    }}
+                >
+                    <div className="filter-container">
+                        {categories.map((cat) => (
+                            <div
+                                key={cat}
+                                onClick={() => setActiveCategory(cat)}
+                                className={`ref-pill ${activeCategory === cat ? "active" : ""}`}
+                            >
+                                {cat}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
                 {/* Cards grid */}
                 <div className="fp-grid">
-                    {projects.map((project, i) => (
+                    {filteredProjects.map((project, i) => (
                         <ProjectCard
                             key={project.id}
                             project={project}

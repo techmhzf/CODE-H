@@ -71,25 +71,25 @@ const ServiceCard = ({ icon, label, visible, delay }) => {
                 justifyContent: "center",
                 gap: "16px",
                 padding: "36px 24px",
-                backgroundColor: "#f8fafc",
-                border: `1px solid ${hovered ? "rgba(37,99,235,0.2)" : "rgba(0,0,0,0.05)"}`,
+                backgroundColor: hovered ? "#1a1a24" : "#111116",
+                border: `1px solid ${hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)"}`,
                 borderRadius: "12px",
                 cursor: "default",
                 textAlign: "center",
                 /* Entrance animation */
                 opacity: visible ? 1 : 0,
                 transform: visible ? "translateY(0)" : "translateY(20px)",
-                transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, border-color 0.3s ease, box-shadow 0.3s ease`,
+                transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
                 /* Hover elevation + glow */
                 boxShadow: hovered
-                    ? "0 8px 32px rgba(37,99,235,0.08), 0 0 0 1px rgba(37,99,235,0.05)"
-                    : "0 2px 12px rgba(0,0,0,0.02)",
+                    ? "0 12px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,99,235,0.1)"
+                    : "0 2px 12px rgba(0,0,0,0.2)",
             }}
         >
             {/* Icon */}
             <span
                 style={{
-                    color: hovered ? "#2563eb" : "#64748b",
+                    color: hovered ? "#3b82f6" : "#64748b",
                     transition: "color 0.3s ease",
                     lineHeight: 0,
                 }}
@@ -104,7 +104,7 @@ const ServiceCard = ({ icon, label, visible, delay }) => {
                     fontSize: "0.875rem",
                     fontWeight: 500,
                     letterSpacing: "0.01em",
-                    color: hovered ? "#1e293b" : "#475569",
+                    color: hovered ? "#f8fafc" : "#94a3b8",
                     transition: "color 0.3s ease",
                     lineHeight: 1.4,
                 }}
@@ -155,9 +155,9 @@ const WhatWeBuildSection = () => {
                 ref={ref}
                 id="what-we-build"
                 style={{
-                    backgroundColor: "#ffffff",
+                    backgroundColor: "#0a0a0f",
                     padding: "120px 7vw",
-                    borderTop: "1px solid rgba(0,0,0,0.05)",
+                    borderTop: "1px solid rgba(255,255,255,0.03)",
                 }}
             >
                 {/* Section header */}
@@ -176,21 +176,21 @@ const WhatWeBuildSection = () => {
                             fontWeight: 600,
                             letterSpacing: "0.2em",
                             textTransform: "uppercase",
-                            color: "#64748b",
+                            color: "#94a3b8",
                         }}
                     >
                         Our Expertise
                     </p>
                     <h2
+                        className="text-transparent bg-clip-text"
                         style={{
                             margin: 0,
                             fontSize: "clamp(1.6rem, 3.5vw, 2.4rem)",
                             fontWeight: 700,
                             letterSpacing: "-0.03em",
-                            background: "linear-gradient(160deg, #0f172a 50%, #334155 100%)",
+                            backgroundImage: "linear-gradient(160deg, #f8fafc 50%, #94a3b8 100%)",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent",
-                            backgroundClip: "text",
                         }}
                     >
                         What We Build

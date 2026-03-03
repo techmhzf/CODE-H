@@ -44,8 +44,8 @@ const MemberCard = ({ member, visible, delay }) => {
             style={{
                 position: "relative",
                 padding: "32px 24px",
-                backgroundColor: "#ffffff",
-                border: "1px solid rgba(0,0,0,0.05)",
+                backgroundColor: hovered ? "#1a1a24" : "#111116",
+                border: "1px solid rgba(255,255,255,0.06)",
                 borderRadius: "12px",
                 display: "flex",
                 flexDirection: "column",
@@ -57,11 +57,11 @@ const MemberCard = ({ member, visible, delay }) => {
                 transform: visible
                     ? (hovered ? "translateY(-6px)" : "translateY(0)")
                     : "translateY(24px)",
-                transition: `opacity 0.7s ease ${delay}ms, transform 0.6s cubic-bezier(0.2, 0, 0.2, 1) ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease`,
+                transition: `opacity 0.7s ease ${delay}ms, transform 0.6s cubic-bezier(0.2, 0, 0.2, 1) ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
                 boxShadow: hovered
-                    ? "0 12px 32px -8px rgba(0,0,0,0.06), 0 0 0 1px rgba(37,99,235,0.05)"
+                    ? "0 12px 32px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(37,99,235,0.1)"
                     : "none",
-                borderColor: hovered ? "rgba(37,99,235,0.15)" : "rgba(0,0,0,0.05)",
+                borderColor: hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)",
             }}
         >
             <div style={{ width: "100%" }}>
@@ -69,7 +69,7 @@ const MemberCard = ({ member, visible, delay }) => {
                     margin: "0 0 4px",
                     fontSize: "1.1rem",
                     fontWeight: 600,
-                    color: "#0f172a",
+                    color: "#f8fafc",
                     letterSpacing: "-0.01em"
                 }}>
                     {member.name}
@@ -78,7 +78,7 @@ const MemberCard = ({ member, visible, delay }) => {
                     margin: 0,
                     fontSize: "0.8rem",
                     fontWeight: 500,
-                    color: "#2563eb",
+                    color: "#3b82f6",
                     textTransform: "uppercase",
                     letterSpacing: "0.05em"
                 }}>
@@ -90,7 +90,7 @@ const MemberCard = ({ member, visible, delay }) => {
                 margin: 0,
                 fontSize: "0.85rem",
                 lineHeight: 1.5,
-                color: "#64748b",
+                color: "#94a3b8",
                 maxWidth: "200px"
             }}>
                 {member.spec}
@@ -102,7 +102,7 @@ const MemberCard = ({ member, visible, delay }) => {
                 rel="noopener noreferrer"
                 style={{
                     marginTop: "8px",
-                    color: hovered ? "#1e293b" : "#94a3b8",
+                    color: hovered ? "#f8fafc" : "#64748b",
                     transition: "color 0.3s ease",
                     display: "flex",
                     alignItems: "center"
@@ -118,7 +118,7 @@ const MemberCard = ({ member, visible, delay }) => {
                 left: "24px",
                 right: "24px",
                 height: "1px",
-                background: "linear-gradient(90deg, transparent, rgba(37,99,235,0.2), transparent)",
+                background: "linear-gradient(90deg, transparent, rgba(37,99,235,0.4), transparent)",
                 opacity: hovered ? 1 : 0,
                 transition: "opacity 0.4s ease"
             }} />
@@ -166,9 +166,9 @@ const TeamSection = () => {
                 ref={ref}
                 id="team"
                 style={{
-                    backgroundColor: "#f1f5f9",
+                    backgroundColor: "#09090b",
                     padding: "120px 7vw",
-                    borderTop: "1px solid rgba(0,0,0,0.05)",
+                    borderTop: "1px solid rgba(255,255,255,0.03)",
                 }}
             >
                 {/* Header */}
@@ -178,21 +178,24 @@ const TeamSection = () => {
                     transform: visible ? "translateY(0)" : "translateY(20px)",
                     transition: "opacity 0.8s ease, transform 0.8s ease",
                 }}>
-                    <h2 style={{
-                        margin: "0 0 16px",
-                        fontSize: "clamp(2rem, 4vw, 2.75rem)",
-                        fontWeight: 700,
-                        letterSpacing: "-0.04em",
-                        background: "linear-gradient(160deg, #0f172a 40%, #334155 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                    }}>
+                    <h2
+                        className="text-transparent bg-clip-text"
+                        style={{
+                            margin: "0 0 16px",
+                            fontSize: "clamp(2rem, 4vw, 2.75rem)",
+                            fontWeight: 700,
+                            letterSpacing: "-0.04em",
+                            backgroundImage: "linear-gradient(160deg, #f8fafc 40%, #94a3b8 100%)",
+                            WebkitBackgroundClip: "text",
+                            WebkitTextFillColor: "transparent",
+                        }}
+                    >
                         The Team
                     </h2>
                     <p style={{
                         margin: 0,
                         fontSize: "1.05rem",
-                        color: "#64748b",
+                        color: "#94a3b8",
                         maxWidth: "400px",
                         lineHeight: 1.6,
                         letterSpacing: "0.01em"
