@@ -1,5 +1,4 @@
-// TechStackSection.jsx — Technology stack with gradient shift and polished animations
-import { useState } from "react"
+// TechStackSection.jsx — Horizontal scrolling marquee of technologies
 import { useScrollReveal } from "../hooks/useScrollReveal"
 
 const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
@@ -51,118 +50,95 @@ const icons = {
             <path d="M16 26v-6M24 26v-6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
         </svg>
     ),
+    Python: (
+        <svg viewBox="0 0 40 40" width="32" height="32" fill="none" aria-hidden="true">
+            <path d="M20 4c-6 0-8 3-8 6v4h8v2H10c-4 0-6 3-6 7s2 7 6 7h3v-5c0-3 2-5 5-5h8c3 0 5-2 5-5V10c0-3-2-6-6-6h-5z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+            <circle cx="15" cy="10" r="1.5" fill="currentColor" />
+        </svg>
+    ),
 }
 
-const techs = ["React", "Node.js", "MongoDB", "Express", "Three.js", "Vercel", "AWS"]
-
-const TechTile = ({ name, visible, delay }) => {
-    const [hovered, setHovered] = useState(false)
-
-    return (
-        <div
-            onMouseEnter={() => setHovered(true)}
-            onMouseLeave={() => setHovered(false)}
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "14px",
-                padding: "28px 16px",
-                backgroundColor: hovered ? "#1a1a24" : "#111116",
-                border: `1px solid ${hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)"}`,
-                borderRadius: "10px",
-                cursor: "default",
-                textAlign: "center",
-                opacity: visible ? 1 : 0,
-                transform: visible
-                    ? hovered ? "scale(1.04)" : "scale(1)"
-                    : "translateY(20px) scale(0.97)",
-                transition: `opacity 0.8s ${EASE} ${delay}ms, transform 0.4s ${EASE}, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease`,
-                boxShadow: hovered
-                    ? "0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(37,99,235,0.08), 0 0 16px rgba(37,99,235,0.06)"
-                    : "none",
-            }}
-        >
-            {/* Icon */}
-            <span
-                style={{
-                    color: hovered ? "#3b82f6" : "#64748b",
-                    lineHeight: 0,
-                    transition: `color 0.3s ease, transform 0.4s ${EASE}`,
-                    transform: hovered ? "scale(1.1)" : "scale(1)",
-                }}
-            >
-                {icons[name]}
-            </span>
-
-            {/* Label */}
-            <span
-                style={{
-                    fontSize: "0.75rem",
-                    fontWeight: 500,
-                    letterSpacing: "0.08em",
-                    textTransform: "uppercase",
-                    color: hovered ? "#f8fafc" : "#94a3b8",
-                    transition: "color 0.3s ease",
-                }}
-            >
-                {name}
-            </span>
-        </div>
-    )
-}
+const techs = ["React", "Node.js", "MongoDB", "Express", "Three.js", "Vercel", "AWS", "Python"]
 
 const TechStackSection = () => {
     const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.15 })
 
+    // Duplicate for seamless loop
+    const marqueeItems = [...techs, ...techs]
+
     return (
         <>
             <style>{`
-        .ts-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-        }
-        @media (max-width: 860px) {
-          .ts-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (max-width: 540px) {
-          .ts-grid { grid-template-columns: repeat(2, 1fr); }
-        }
-      `}</style>
+                @keyframes marqueeScroll {
+                    0% { transform: translateX(0); }
+                    100% { transform: translateX(-50%); }
+                }
+                .marquee-track {
+                    display: flex;
+                    gap: 24px;
+                    animation: marqueeScroll 30s linear infinite;
+                    width: max-content;
+                }
+                .marquee-track:hover {
+                    animation-play-state: paused;
+                }
+                .tech-chip {
+                    display: flex;
+                    align-items: center;
+                    gap: 14px;
+                    padding: 16px 28px;
+                    background: #111116;
+                    border: 1px solid rgba(255,255,255,0.06);
+                    border-radius: 12px;
+                    white-space: nowrap;
+                    cursor: default;
+                    transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+                    flex-shrink: 0;
+                }
+                .tech-chip:hover {
+                    background: #1a1a24;
+                    border-color: rgba(37,99,235,0.35);
+                    box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 16px rgba(37,99,235,0.06);
+                    transform: translateY(-3px);
+                }
+                .tech-chip .chip-icon {
+                    color: #64748b;
+                    line-height: 0;
+                    transition: color 0.3s ease;
+                }
+                .tech-chip:hover .chip-icon {
+                    color: #3b82f6;
+                }
+                .tech-chip .chip-label {
+                    font-size: 0.88rem;
+                    font-weight: 500;
+                    letter-spacing: 0.02em;
+                    color: #94a3b8;
+                    transition: color 0.3s ease;
+                }
+                .tech-chip:hover .chip-label {
+                    color: #f8fafc;
+                }
+            `}</style>
 
             <section
                 ref={ref}
                 id="tech-stack"
                 style={{
                     backgroundColor: "#0a0a0f",
-                    padding: "100px 7vw",
+                    padding: "80px 0",
                     borderTop: "1px solid rgba(255,255,255,0.03)",
-                    position: "relative",
                     overflow: "hidden",
                 }}
             >
-                {/* Subtle background gradient shift when visible */}
+                {/* Header — with side padding */}
                 <div
                     style={{
-                        position: "absolute",
-                        inset: 0,
-                        background: "radial-gradient(ellipse at 50% 50%, rgba(37,99,235,0.03) 0%, transparent 70%)",
-                        opacity: visible ? 1 : 0,
-                        transition: `opacity 1.5s ${EASE}`,
-                        pointerEvents: "none",
-                    }}
-                />
-
-                {/* Header */}
-                <div
-                    style={{
-                        position: "relative",
+                        padding: "0 7vw",
                         opacity: visible ? 1 : 0,
                         transform: visible ? "translateY(0)" : "translateY(20px)",
                         transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
-                        marginBottom: "52px",
+                        marginBottom: "48px",
                     }}
                 >
                     <p
@@ -193,16 +169,23 @@ const TechStackSection = () => {
                     </h2>
                 </div>
 
-                {/* Tiles */}
-                <div className="ts-grid" style={{ position: "relative" }}>
-                    {techs.map((name, i) => (
-                        <TechTile
-                            key={name}
-                            name={name}
-                            visible={visible}
-                            delay={80 * i}
-                        />
-                    ))}
+                {/* Marquee — full width, no side padding */}
+                <div
+                    style={{
+                        opacity: visible ? 1 : 0,
+                        transition: `opacity 1.2s ${EASE} 0.2s`,
+                        maskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
+                        WebkitMaskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
+                    }}
+                >
+                    <div className="marquee-track">
+                        {marqueeItems.map((name, i) => (
+                            <div key={`${name}-${i}`} className="tech-chip">
+                                <span className="chip-icon">{icons[name]}</span>
+                                <span className="chip-label">{name}</span>
+                            </div>
+                        ))}
+                    </div>
                 </div>
             </section>
         </>

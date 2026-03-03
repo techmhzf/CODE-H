@@ -93,7 +93,7 @@ const HeroSection = () => {
                     </h1>
 
                     {/* Sub-headline */}
-                    <p className="text-[1rem] font-normal leading-relaxed text-zinc-400 max-w-[400px]">
+                    <p className="text-[1rem] font-normal leading-relaxed text-zinc-300 max-w-[400px]">
                         We build custom software systems for real-world businesses.
                     </p>
 
