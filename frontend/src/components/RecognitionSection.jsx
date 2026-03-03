@@ -120,13 +120,13 @@ const RecognitionSection = () => {
                 ref={ref}
                 id="recognition"
                 style={{
-                    backgroundColor: "#0a0a0f",
+                    backgroundColor: "#f1f5f9", // Slate-100
                     padding: "120px 7vw",
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     textAlign: "center",
-                    borderTop: "1px solid rgba(255,255,255,0.04)",
+                    borderTop: "1px solid rgba(0,0,0,0.05)",
                 }}
             >
                 {/* Fade-in wrapper */}
@@ -151,7 +151,7 @@ const RecognitionSection = () => {
                                 fontSize: "clamp(1.4rem, 3vw, 2rem)",
                                 fontWeight: 700,
                                 letterSpacing: "-0.02em",
-                                background: "linear-gradient(160deg, #e8edf5 55%, #7a98b4 100%)",
+                                background: "linear-gradient(160deg, #0f172a 55%, #334155 100%)",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
                                 backgroundClip: "text",
@@ -172,7 +172,7 @@ const RecognitionSection = () => {
                             fontWeight: 600,
                             letterSpacing: "0.18em",
                             textTransform: "uppercase",
-                            color: "#7a9ab4",
+                            color: "#475569", // Slate-600
                         }}
                     >
                         Winners – Smart India Hackathon 2025
@@ -185,11 +185,11 @@ const RecognitionSection = () => {
                             fontSize: "1rem",
                             fontWeight: 400,
                             lineHeight: 1.7,
-                            color: "#4e6070",
+                            color: "#64748b", // Slate-500
                             maxWidth: "380px",
                         }}
                     >
-                        Built&nbsp;<span style={{ color: "#8faabf", fontWeight: 500 }}>C-TRACE</span>,
+                        Built&nbsp;<span style={{ color: "#334155", fontWeight: 500 }}>C-TRACE</span>,
                         &nbsp;a real-world problem-solving system.
                     </p>
                 </div>
