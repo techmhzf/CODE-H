@@ -1,5 +1,8 @@
-// TeamSection.jsx — Engineering team showcase
-import { useEffect, useRef, useState } from "react"
+// TeamSection.jsx — Engineering team with polished scroll animations
+import { useState } from "react"
+import { useScrollReveal } from "../hooks/useScrollReveal"
+
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 const team = [
     {
@@ -56,10 +59,10 @@ const MemberCard = ({ member, visible, delay }) => {
                 opacity: visible ? 1 : 0,
                 transform: visible
                     ? (hovered ? "translateY(-6px)" : "translateY(0)")
-                    : "translateY(24px)",
-                transition: `opacity 0.7s ease ${delay}ms, transform 0.6s cubic-bezier(0.2, 0, 0.2, 1) ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
+                    : "translateY(28px)",
+                transition: `opacity 0.8s ${EASE} ${delay}ms, transform 0.5s ${EASE} ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
                 boxShadow: hovered
-                    ? "0 12px 32px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(37,99,235,0.1)"
+                    ? "0 16px 40px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(37,99,235,0.1)"
                     : "none",
                 borderColor: hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)",
             }}
@@ -127,24 +130,7 @@ const MemberCard = ({ member, visible, delay }) => {
 }
 
 const TeamSection = () => {
-    const ref = useRef(null)
-    const [visible, setVisible] = useState(false)
-
-    useEffect(() => {
-        const el = ref.current
-        if (!el) return
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setVisible(true)
-                    observer.disconnect()
-                }
-            },
-            { threshold: 0.1 }
-        )
-        observer.observe(el)
-        return () => observer.disconnect()
-    }, [])
+    const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.1 })
 
     return (
         <>
@@ -175,8 +161,8 @@ const TeamSection = () => {
                 <div style={{
                     marginBottom: "64px",
                     opacity: visible ? 1 : 0,
-                    transform: visible ? "translateY(0)" : "translateY(20px)",
-                    transition: "opacity 0.8s ease, transform 0.8s ease",
+                    transform: visible ? "translateY(0)" : "translateY(24px)",
+                    transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
                 }}>
                     <h2
                         className="text-transparent bg-clip-text"
@@ -211,7 +197,7 @@ const TeamSection = () => {
                             key={m.name}
                             member={m}
                             visible={visible}
-                            delay={100 * i}
+                            delay={120 * i}
                         />
                     ))}
                 </div>

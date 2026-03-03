@@ -1,5 +1,6 @@
-// WhatWeBuildSection.jsx — Service offerings grid
-import { useEffect, useRef, useState } from "react"
+// WhatWeBuildSection.jsx — Service offerings grid with enhanced animations
+import { useState } from "react"
+import { useScrollReveal } from "../hooks/useScrollReveal"
 
 /* ─── Minimal line icons (inline SVG) ─── */
 const icons = {
@@ -57,6 +58,8 @@ const services = [
     { id: "api", label: "API & Backend Systems", icon: icons.api },
 ]
 
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
+
 const ServiceCard = ({ icon, label, visible, delay }) => {
     const [hovered, setHovered] = useState(false)
 
@@ -78,20 +81,23 @@ const ServiceCard = ({ icon, label, visible, delay }) => {
                 textAlign: "center",
                 /* Entrance animation */
                 opacity: visible ? 1 : 0,
-                transform: visible ? "translateY(0)" : "translateY(20px)",
-                transition: `opacity 0.7s ease ${delay}ms, transform 0.7s ease ${delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
+                transform: visible
+                    ? (hovered ? "translateY(-6px)" : "translateY(0)")
+                    : "translateY(24px)",
+                transition: `opacity 0.8s ${EASE} ${delay}ms, transform 0.5s ${EASE} ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
                 /* Hover elevation + glow */
                 boxShadow: hovered
-                    ? "0 12px 32px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,99,235,0.1)"
+                    ? "0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,99,235,0.1), 0 0 20px rgba(37,99,235,0.06)"
                     : "0 2px 12px rgba(0,0,0,0.2)",
             }}
         >
-            {/* Icon */}
+            {/* Icon — scales up on hover */}
             <span
                 style={{
                     color: hovered ? "#3b82f6" : "#64748b",
-                    transition: "color 0.3s ease",
+                    transition: `color 0.3s ease, transform 0.4s ${EASE}`,
                     lineHeight: 0,
+                    transform: hovered ? "scale(1.15)" : "scale(1)",
                 }}
             >
                 {icon}
@@ -116,24 +122,7 @@ const ServiceCard = ({ icon, label, visible, delay }) => {
 }
 
 const WhatWeBuildSection = () => {
-    const ref = useRef(null)
-    const [visible, setVisible] = useState(false)
-
-    useEffect(() => {
-        const el = ref.current
-        if (!el) return
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setVisible(true)
-                    observer.disconnect()
-                }
-            },
-            { threshold: 0.15 }
-        )
-        observer.observe(el)
-        return () => observer.disconnect()
-    }, [])
+    const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.15 })
 
     return (
         <>
@@ -164,8 +153,8 @@ const WhatWeBuildSection = () => {
                 <div
                     style={{
                         opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(16px)",
-                        transition: "opacity 0.8s ease, transform 0.8s ease",
+                        transform: visible ? "translateY(0)" : "translateY(20px)",
+                        transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
                         marginBottom: "64px",
                     }}
                 >
@@ -205,7 +194,7 @@ const WhatWeBuildSection = () => {
                             icon={icon}
                             label={label}
                             visible={visible}
-                            delay={80 * i}
+                            delay={100 * i}
                         />
                     ))}
                 </div>

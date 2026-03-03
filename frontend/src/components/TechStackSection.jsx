@@ -1,5 +1,8 @@
-// TechStackSection.jsx — Technology stack grid with icons
-import { useEffect, useRef, useState } from "react"
+// TechStackSection.jsx — Technology stack with gradient shift and polished animations
+import { useState } from "react"
+import { useScrollReveal } from "../hooks/useScrollReveal"
+
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 /* ─── Inline SVG brand-style icons ─── */
 const icons = {
@@ -74,10 +77,10 @@ const TechTile = ({ name, visible, delay }) => {
                 opacity: visible ? 1 : 0,
                 transform: visible
                     ? hovered ? "scale(1.04)" : "scale(1)"
-                    : "translateY(18px) scale(0.97)",
-                transition: `opacity 0.65s ease ${delay}ms, transform 0.3s ease, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease`,
+                    : "translateY(20px) scale(0.97)",
+                transition: `opacity 0.8s ${EASE} ${delay}ms, transform 0.4s ${EASE}, border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease`,
                 boxShadow: hovered
-                    ? "0 6px 28px rgba(0,0,0,0.3), 0 0 0 1px rgba(37,99,235,0.05)"
+                    ? "0 8px 32px rgba(0,0,0,0.3), 0 0 0 1px rgba(37,99,235,0.08), 0 0 16px rgba(37,99,235,0.06)"
                     : "none",
             }}
         >
@@ -86,7 +89,8 @@ const TechTile = ({ name, visible, delay }) => {
                 style={{
                     color: hovered ? "#3b82f6" : "#64748b",
                     lineHeight: 0,
-                    transition: "color 0.3s ease",
+                    transition: `color 0.3s ease, transform 0.4s ${EASE}`,
+                    transform: hovered ? "scale(1.1)" : "scale(1)",
                 }}
             >
                 {icons[name]}
@@ -110,24 +114,7 @@ const TechTile = ({ name, visible, delay }) => {
 }
 
 const TechStackSection = () => {
-    const ref = useRef(null)
-    const [visible, setVisible] = useState(false)
-
-    useEffect(() => {
-        const el = ref.current
-        if (!el) return
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setVisible(true)
-                    observer.disconnect()
-                }
-            },
-            { threshold: 0.15 }
-        )
-        observer.observe(el)
-        return () => observer.disconnect()
-    }, [])
+    const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.15 })
 
     return (
         <>
@@ -152,14 +139,29 @@ const TechStackSection = () => {
                     backgroundColor: "#0a0a0f",
                     padding: "100px 7vw",
                     borderTop: "1px solid rgba(255,255,255,0.03)",
+                    position: "relative",
+                    overflow: "hidden",
                 }}
             >
+                {/* Subtle background gradient shift when visible */}
+                <div
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        background: "radial-gradient(ellipse at 50% 50%, rgba(37,99,235,0.03) 0%, transparent 70%)",
+                        opacity: visible ? 1 : 0,
+                        transition: `opacity 1.5s ${EASE}`,
+                        pointerEvents: "none",
+                    }}
+                />
+
                 {/* Header */}
                 <div
                     style={{
+                        position: "relative",
                         opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(16px)",
-                        transition: "opacity 0.8s ease, transform 0.8s ease",
+                        transform: visible ? "translateY(0)" : "translateY(20px)",
+                        transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
                         marginBottom: "52px",
                     }}
                 >
@@ -192,13 +194,13 @@ const TechStackSection = () => {
                 </div>
 
                 {/* Tiles */}
-                <div className="ts-grid">
+                <div className="ts-grid" style={{ position: "relative" }}>
                     {techs.map((name, i) => (
                         <TechTile
                             key={name}
                             name={name}
                             visible={visible}
-                            delay={60 * i}
+                            delay={80 * i}
                         />
                     ))}
                 </div>

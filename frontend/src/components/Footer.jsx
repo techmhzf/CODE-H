@@ -1,8 +1,21 @@
-import React from 'react';
+// Footer.jsx — Fade-in on scroll
+import { useScrollReveal } from "../hooks/useScrollReveal"
+
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 const Footer = () => {
+    const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.2 })
+
     return (
-        <footer className="bg-[#0a0a0f] text-zinc-500 py-12 px-6 border-t border-white/[0.03]">
+        <footer
+            ref={ref}
+            className="bg-[#0a0a0f] text-zinc-500 py-12 px-6 border-t border-white/[0.03]"
+            style={{
+                opacity: visible ? 1 : 0,
+                transform: visible ? "translateY(0)" : "translateY(16px)",
+                transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
+            }}
+        >
             <div className="max-w-4xl mx-auto flex flex-col items-center text-center space-y-6">
 
                 {/* Brand */}
@@ -32,7 +45,7 @@ const Footer = () => {
                     </a>
                 </div>
 
-                {/* Copyright or Bottom Note */}
+                {/* Copyright */}
                 <div className="pt-4">
                     <p className="text-[9px] uppercase tracking-[0.2em] opacity-30 text-zinc-600">
                         &copy; {new Date().getFullYear()} CODE-H. All rights reserved.
@@ -40,7 +53,7 @@ const Footer = () => {
                 </div>
             </div>
         </footer>
-    );
-};
+    )
+}
 
-export default Footer;
+export default Footer

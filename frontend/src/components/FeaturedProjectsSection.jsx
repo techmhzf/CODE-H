@@ -1,5 +1,8 @@
-// FeaturedProjectsSection.jsx — Showcase of key projects
-import { useEffect, useRef, useState } from "react"
+// FeaturedProjectsSection.jsx — Showcase with refined 3D tilt and animations
+import { useRef, useState } from "react"
+import { useScrollReveal } from "../hooks/useScrollReveal"
+
+const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 /* GitHub icon SVG */
 const GitHubIcon = () => (
@@ -84,7 +87,8 @@ const ProjectCard = ({ project, visible, delay }) => {
         const cy = rect.top + rect.height / 2
         const dx = (e.clientX - cx) / (rect.width / 2)
         const dy = (e.clientY - cy) / (rect.height / 2)
-        setTilt({ x: dy * -8, y: dx * 8 })
+        // Reduced from ±8° to ±5° for subtlety
+        setTilt({ x: dy * -5, y: dx * 5 })
     }
 
     const handleMouseLeave = () => {
@@ -102,24 +106,23 @@ const ProjectCard = ({ project, visible, delay }) => {
             style={{
                 opacity: visible ? 1 : 0,
                 transform: visible
-                    ? `translateY(0) perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
-                    : "translateY(24px) perspective(800px) rotateX(0deg) rotateY(0deg)",
-                transition: `opacity 0.7s ease ${delay}ms, transform ${hovered ? "0.1s" : "0.6s"} ease${hovered ? "" : ` ${delay}ms`}, box-shadow 0.3s ease`,
+                    ? `translateY(${hovered ? "-4px" : "0"}) perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
+                    : "translateY(28px) perspective(800px) rotateX(0deg) rotateY(0deg)",
+                transition: `opacity 0.8s ${EASE} ${delay}ms, transform ${hovered ? "0.1s" : `0.7s ${EASE}`}${hovered ? "" : ` ${delay}ms`}, box-shadow 0.4s ease`,
                 willChange: "transform",
-                /* Dark Background */
                 background: hovered ? "#1a1a24" : "#111116",
                 border: `1px solid ${hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)"}`,
                 borderRadius: "14px",
                 padding: "0",
                 overflow: "hidden",
                 cursor: "default",
-                /* Soft Shadow depth */
+                /* Deeper shadow on hover */
                 boxShadow: hovered
-                    ? "0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,99,235,0.1)"
+                    ? "0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(37,99,235,0.12), 0 0 30px rgba(37,99,235,0.05)"
                     : "0 4px 24px rgba(0,0,0,0.2)",
             }}
         >
-            {/* Blue accent line at top */}
+            {/* Blue accent line at top — glows on hover */}
             <div
                 style={{
                     height: "3px",
@@ -127,8 +130,9 @@ const ProjectCard = ({ project, visible, delay }) => {
                         ? "linear-gradient(90deg, #2563eb, #60a5fa, #2563eb)"
                         : "linear-gradient(90deg, #3b82f6, #60a5fa)",
                     backgroundSize: hovered ? "200% 100%" : "100% 100%",
-                    transition: "background 0.4s ease",
+                    transition: "background 0.4s ease, box-shadow 0.4s ease",
                     borderRadius: "14px 14px 0 0",
+                    boxShadow: hovered ? "0 0 12px rgba(37,99,235,0.4)" : "none",
                 }}
             />
 
@@ -187,7 +191,6 @@ const ProjectCard = ({ project, visible, delay }) => {
 
                 {/* Action buttons */}
                 <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    {/* GitHub button */}
                     <a
                         href={project.githubUrl}
                         target="_blank"
@@ -198,8 +201,6 @@ const ProjectCard = ({ project, visible, delay }) => {
                         <GitHubIcon />
                         GitHub
                     </a>
-
-                    {/* View button — BloomTale only */}
                     {project.viewUrl && (
                         <a
                             href={project.viewUrl}
@@ -219,27 +220,10 @@ const ProjectCard = ({ project, visible, delay }) => {
 }
 
 const FeaturedProjectsSection = () => {
-    const ref = useRef(null)
-    const [visible, setVisible] = useState(false)
+    const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.1 })
     const [activeCategory, setActiveCategory] = useState("ALL PROJECTS")
 
     const categories = ["ALL PROJECTS", "AI / ML", "BLOCKCHAIN", "FULL STACK", "PROBLEM SOLVING"]
-
-    useEffect(() => {
-        const el = ref.current
-        if (!el) return
-        const observer = new IntersectionObserver(
-            ([entry]) => {
-                if (entry.isIntersecting) {
-                    setVisible(true)
-                    observer.disconnect()
-                }
-            },
-            { threshold: 0.1 }
-        )
-        observer.observe(el)
-        return () => observer.disconnect()
-    }, [])
 
     const filteredProjects = activeCategory === "ALL PROJECTS"
         ? projects
@@ -276,7 +260,6 @@ const FeaturedProjectsSection = () => {
         }
         .fp-btn:hover { transform: translateY(-1px); }
         .fp-btn:active { transform: translateY(0); }
-        /* Ghost style — GitHub */
         .fp-btn-ghost {
           color: #94a3b8;
           background: rgba(255,255,255,0.05);
@@ -288,7 +271,6 @@ const FeaturedProjectsSection = () => {
           border-color: rgba(255,255,255,0.2);
           box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         }
-        /* Primary style — View */
         .fp-btn-primary {
           color: #ffffff;
           background: #2563eb;
@@ -300,8 +282,6 @@ const FeaturedProjectsSection = () => {
           box-shadow: 0 2px 14px rgba(37,99,235,0.2);
           color: #ffffff;
         }
-
-        /* Filter Pills - Premium Style based on reference */
         .filter-container {
             background: #05070a; 
             padding: 8px;
@@ -327,7 +307,7 @@ const FeaturedProjectsSection = () => {
             letter-spacing: 0.1em;
             text-transform: uppercase;
             cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             color: #94a3b8;
             border: 1px solid transparent;
             white-space: nowrap;
@@ -354,8 +334,8 @@ const FeaturedProjectsSection = () => {
                 <div
                     style={{
                         opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(16px)",
-                        transition: "opacity 0.8s ease, transform 0.8s ease",
+                        transform: visible ? "translateY(0)" : "translateY(20px)",
+                        transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
                         marginBottom: "48px",
                     }}
                 >
@@ -387,12 +367,12 @@ const FeaturedProjectsSection = () => {
                     </h2>
                 </div>
 
-                {/* Filter Navigation - Using Reference Image Style */}
+                {/* Filter Navigation */}
                 <div
                     style={{
                         opacity: visible ? 1 : 0,
                         transform: visible ? "translateY(0)" : "translateY(16px)",
-                        transition: "opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s",
+                        transition: `opacity 0.9s ${EASE} 0.15s, transform 0.9s ${EASE} 0.15s`,
                         display: "flex",
                         justifyContent: "flex-start",
                         marginBottom: "30px"
@@ -418,7 +398,7 @@ const FeaturedProjectsSection = () => {
                             key={project.id}
                             project={project}
                             visible={visible}
-                            delay={80 * i}
+                            delay={100 * i}
                         />
                     ))}
                 </div>
