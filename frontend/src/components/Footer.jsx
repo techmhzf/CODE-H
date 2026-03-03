@@ -57,11 +57,12 @@ const Footer = () => {
                 initial={{ opacity: 0, y: 16 }}
                 animate={visible ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+                className="footer-inner"
                 style={{
                     padding: "48px 7vw 40px",
                     display: "flex",
                     flexWrap: "wrap",
-                    justifyContent: "space-between",
+                    justifyContent: "flex-start",
                     alignItems: "flex-start",
                     gap: "40px",
                 }}
@@ -88,7 +89,7 @@ const Footer = () => {
                     </p>
 
                     {/* Social icons */}
-                    <div style={{ display: "flex", gap: "12px" }}>
+                    <div className="footer-social-row" style={{ display: "flex", gap: "12px" }}>
                         {socialLinks.map(({ icon, href, label }) => (
                             <a
                                 key={label}
@@ -158,33 +159,6 @@ const Footer = () => {
                             </a>
                         ))}
                     </div>
-                </div>
-
-                {/* Contact column */}
-                <div>
-                    <h4 style={{
-                        margin: "0 0 16px",
-                        fontSize: "0.7rem",
-                        fontWeight: 600,
-                        letterSpacing: "0.15em",
-                        textTransform: "uppercase",
-                        color: "var(--text-muted)",
-                    }}>
-                        Contact
-                    </h4>
-                    <a
-                        href="mailto:contact@codeh.com"
-                        style={{
-                            fontSize: "0.82rem",
-                            color: "var(--accent-blue-light)",
-                            textDecoration: "none",
-                            transition: "color 0.2s ease",
-                        }}
-                        onMouseEnter={e => e.currentTarget.style.color = "#60a5fa"}
-                        onMouseLeave={e => e.currentTarget.style.color = "var(--accent-blue-light)"}
-                    >
-                        contact@codeh.com
-                    </a>
                 </div>
             </motion.div>
 

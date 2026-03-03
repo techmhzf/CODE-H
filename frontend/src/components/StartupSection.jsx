@@ -172,7 +172,7 @@ const StartupSection = () => {
                 id="startup"
                 style={{
                     backgroundColor: "var(--bg-secondary)",
-                    padding: "120px 7vw",
+                    padding: "clamp(56px, 10vw, 120px) 7vw",
                 }}
             >
                 {/* Section header */}
@@ -261,7 +261,7 @@ const StartupSection = () => {
                                 e.currentTarget.style.backgroundPosition = "left center"
                             }}
                         >
-                            Work with Us
+                            Visit Our Website
                             <svg
                                 width="18"
                                 height="18"

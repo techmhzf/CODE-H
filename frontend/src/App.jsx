@@ -12,6 +12,7 @@ import TeamSection from './components/TeamSection'
 import Footer from './components/Footer'
 import ScrollProgress from './components/ScrollProgress'
 import SectionDivider from './components/SectionDivider'
+import ScrollToTop from './components/ScrollToTop'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
       <Navbar />
       <GrainOverlay />
       <ScrollProgress />
+      <ScrollToTop />
       <HeroSection />
       <SectionDivider color="#3b82f6" opacity={0.25} />
       <AchievementsSection />

@@ -98,6 +98,7 @@ const HeroSection = () => {
 
                 {/* ── Left: Text content ── */}
                 <motion.div
+                    className="hero-text-col"
                     initial={{ opacity: 0, y: 32 }}
                     animate={{ opacity: visible ? textOpacity : 0, y: visible ? textTranslateY : 20 }}
                     transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
@@ -108,34 +109,25 @@ const HeroSection = () => {
                         willChange: "transform, opacity",
                     }}
                 >
-                    {/* Badge */}
-                    <motion.span
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: 0.15, duration: 0.5 }}
-                        className="w-fit text-[0.72rem] font-semibold tracking-[0.22em] uppercase text-violet-400 border border-violet-500/20 bg-violet-500/[0.04] px-3 py-1 rounded-full"
-                    >
-                        CODE-H
-                    </motion.span>
 
                     {/* Main headline */}
-                    <h1 className="text-5xl xl:text-[4.4rem] font-extrabold leading-[1.06] tracking-[-0.03em] text-transparent bg-clip-text"
+                    <h1 className="hero-headline text-3xl xl:text-[4.4rem] font-extrabold leading-[1.06] tracking-[-0.03em] text-transparent bg-clip-text pb-1"
                         style={{
                             backgroundImage: "linear-gradient(160deg, #f8fafc 60%, #94a3b8 100%)",
                             WebkitBackgroundClip: "text",
                             WebkitTextFillColor: "transparent"
                         }}
                     >
-                        Problem-Solving<br />Engineers
+                        <span style={{ whiteSpace: "nowrap" }}>Problem-Solving</span><br />Engineers
                     </h1>
 
                     {/* Sub-headline */}
-                    <p className="text-[1rem] font-normal leading-relaxed text-zinc-300 max-w-[400px]">
+                    <p className="hero-sub text-[1rem] font-normal leading-relaxed text-zinc-300 max-w-[400px]">
                         We build custom software systems for real-world businesses.
                     </p>
 
                     {/* Buttons — improved with glows */}
-                    <div className="flex flex-wrap gap-3 mt-2">
+                    <div className="hero-cta-row flex flex-wrap gap-3 mt-2">
                         <a
                             href="#featured-projects"
                             style={{
@@ -168,43 +160,12 @@ const HeroSection = () => {
                         >
                             View Our Work
                         </a>
-                        <a
-                            href="mailto:contact@codeh.com"
-                            style={{
-                                display: "inline-flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                padding: "14px 28px",
-                                background: "rgba(255,255,255,0.03)",
-                                color: "#f8fafc",
-                                fontSize: "0.875rem",
-                                fontWeight: 600,
-                                letterSpacing: "0.02em",
-                                borderRadius: "12px",
-                                border: "1px solid rgba(255,255,255,0.08)",
-                                textDecoration: "none",
-                                transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
-                                backdropFilter: "blur(12px)",
-                                WebkitBackdropFilter: "blur(12px)",
-                            }}
-                            onMouseEnter={e => {
-                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"
-                                e.currentTarget.style.background = "rgba(255,255,255,0.06)"
-                                e.currentTarget.style.transform = "translateY(-3px) scale(1.02)"
-                            }}
-                            onMouseLeave={e => {
-                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"
-                                e.currentTarget.style.background = "rgba(255,255,255,0.03)"
-                                e.currentTarget.style.transform = "translateY(0) scale(1)"
-                            }}
-                        >
-                            Start a Project
-                        </a>
                     </div>
                 </motion.div>
 
                 {/* ── Right: 3D canvas ── */}
                 <div
+                    className="hero-canvas-wrapper"
                     style={{
                         height: "min(60vw, 540px)",
                         width: "100%",

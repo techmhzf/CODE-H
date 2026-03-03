@@ -145,6 +145,18 @@ body {
   }
 }
 
+/* Mobile: full-width bar with brand + hamburger */
+@media (max-width: 640px) {
+  .navbar-container {
+    width: calc(100vw - 32px) !important;
+    max-width: calc(100vw - 32px) !important;
+    border-radius: 9999px !important;
+    padding: 14px 18px !important;
+    justify-content: space-between !important;
+    overflow: visible !important;
+  }
+}
+
 /* ── Cursor Glow Effect (for cards) ── */
 .card-glow {
   position: relative;
@@ -173,4 +185,136 @@ body {
 ::selection {
   background-color: rgba(37, 99, 235, 0.3);
   color: #f8fafc;
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Tablet (≤ 768px)
+══════════════════════════════════════════ */
+@media (max-width: 768px) {
+
+  /* Reduce heavy vertical padding on all sections */
+  section {
+    padding-top: clamp(64px, 12vw, 96px) !important;
+    padding-bottom: clamp(64px, 12vw, 96px) !important;
+  }
+
+  /* Navbar: lower top offset for smaller screens */
+  .navbar-container {
+    top: 16px !important;
+  }
+
+  /* Hero */
+  #home {
+    padding-left: 5vw !important;
+    padding-right: 5vw !important;
+    padding-top: 100px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Hero text content: center the flex column */
+  .hero-text-col {
+    align-items: center !important;
+  }
+
+  /* Center paragraph */
+  .hero-sub {
+    max-width: 100% !important;
+  }
+
+  /* Center CTA row */
+  .hero-cta-row {
+    justify-content: center !important;
+  }
+
+  /* Hide 3D canvas on tablet/mobile so hero text has full width */
+  .hero-canvas-wrapper {
+    display: none !important;
+  }
+
+  /* Footer — center all columns on small screens */
+  .footer-inner {
+    justify-content: center !important;
+  }
+
+  .footer-inner>div {
+    align-items: center !important;
+    display: flex !important;
+    flex-direction: column !important;
+    text-align: center !important;
+  }
+
+  .footer-social-row {
+    justify-content: center !important;
+  }
+
+  /* Our Approach timeline dot position: shift right so it doesn't clip */
+  .approach-steps-container {
+    padding-left: 28px !important;
+  }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Mobile (≤ 480px)
+══════════════════════════════════════════ */
+@media (max-width: 480px) {
+
+  /* Section padding */
+  section {
+    padding-top: 56px !important;
+    padding-bottom: 56px !important;
+  }
+
+  /* Hero CTA buttons: stack vertically */
+  .hero-cta-row {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .hero-cta-row a {
+    width: 100% !important;
+    justify-content: center !important;
+    text-align: center !important;
+  }
+
+  /* Achievements banner padding */
+  .ach-banner {
+    padding: 20px 16px !important;
+    gap: 14px !important;
+  }
+
+  /* Filter pills: horizontal scroll instead of wrapping */
+  .filter-container {
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
+    border-radius: 9999px !important;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .filter-container::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Approach steps: tighter left padding */
+  .approach-steps-container {
+    padding-left: 20px !important;
+  }
+}
+
+/* ══════════════════════════════════════════
+   RESPONSIVE — Tiny phones (≤ 360px)
+══════════════════════════════════════════ */
+@media (max-width: 360px) {
+  .navbar-container {
+    padding: 4px 6px !important;
+  }
+
+  .nav-link {
+    font-size: 0.6rem !important;
+    padding: 5px 8px !important;
+  }
 }

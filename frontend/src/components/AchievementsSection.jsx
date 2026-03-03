@@ -169,7 +169,7 @@ const AchievementsSection = () => {
                 id="achievements"
                 style={{
                     backgroundColor: "var(--bg-primary)",
-                    padding: "120px 7vw",
+                    padding: "clamp(56px, 10vw, 120px) 7vw",
                 }}
             >
                 {/* Section header */}
@@ -225,6 +225,7 @@ const AchievementsSection = () => {
                     initial={{ opacity: 0, y: 24 }}
                     animate={visible ? { opacity: 1, y: 0 } : {}}
                     transition={{ duration: 0.9, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+                    className="ach-banner"
                     style={{
                         marginBottom: "32px",
                         padding: "28px 32px",

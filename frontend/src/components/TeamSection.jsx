@@ -5,28 +5,32 @@ import { useScrollReveal } from "../hooks/useScrollReveal"
 
 const team = [
     {
-        name: "Abubakkar",
-        role: "Lead Systems Engineer",
-        spec: "Scalable Architecture • Backend",
-        github: "https://github.com"
+        name: "Faraaz",
+        role: "Frontend Developer & UI/UX Designer",
+        spec: "Design Systems • User Experience • Responsive Interfaces",
+        bio: "Focuses on crafting intuitive interfaces and scalable frontend architectures that enhance user interaction and performance.",
+        github: "https://github.com/Faraaz1806"
     },
     {
-        name: "Member 2",
-        role: "Full-Stack Developer",
-        spec: "React • Node.js • Cloud",
-        github: "https://github.com"
+        name: "Huzaifa",
+        role: "App Developer & UI/UX Specialist",
+        spec: "Cross-Platform Apps • System Thinking • Experience Design",
+        bio: "Builds structured mobile applications with strong UI logic, user flow optimization, and performance-focused architecture.",
+        github: "https://github.com/techmhzf"
     },
     {
-        name: "Member 3",
-        role: "Frontend Architect",
-        spec: "UI/UX • Performance • Three.js",
-        github: "https://github.com"
+        name: "Taufique",
+        role: "Backend Engineer & Deployment Specialist",
+        spec: "API Architecture • Database Design • Cloud Deployment",
+        bio: "Designs scalable backend systems, secure APIs, and handles deployment pipelines with performance optimization.",
+        github: "https://github.com/TaufiqueUmar"
     },
     {
-        name: "Member 4",
-        role: "DevOps Specialist",
-        spec: "Kubernetes • AWS • CI/CD",
-        github: "https://github.com"
+        name: "Shahid",
+        role: "Blockchain Engineer & System Designer",
+        spec: "Smart Contracts • Distributed Systems • System Architecture",
+        bio: "Specializes in blockchain-based solutions and robust system design for secure and scalable digital infrastructures.",
+        github: "https://github.com/InputBlock"
     },
 ]
 
@@ -52,8 +56,8 @@ const cardVariants = {
 const MemberCard = ({ member }) => {
     const [hovered, setHovered] = useState(false)
 
-    // Generate initials for avatar placeholder
-    const initials = member.name.split(" ").map(n => n[0]).join("").toUpperCase()
+    // Single first-letter initial for avatar badge
+    const initials = member.name[0].toUpperCase()
 
     return (
         <motion.div
@@ -135,13 +139,22 @@ const MemberCard = ({ member }) => {
             </div>
 
             <p style={{
-                margin: 0,
-                fontSize: "0.85rem",
+                margin: "0 0 2px",
+                fontSize: "0.78rem",
                 lineHeight: 1.5,
-                color: "var(--text-muted)",
-                maxWidth: "200px"
+                color: "var(--accent-blue-light)",
+                opacity: 0.75,
+                letterSpacing: "0.02em",
             }}>
                 {member.spec}
+            </p>
+            <p style={{
+                margin: 0,
+                fontSize: "0.85rem",
+                lineHeight: 1.6,
+                color: "var(--text-muted)",
+            }}>
+                {member.bio}
             </p>
 
             <a
@@ -149,12 +162,14 @@ const MemberCard = ({ member }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                    marginTop: "4px",
+                    position: "absolute",
+                    top: "50px",
+                    right: "40px",
                     color: hovered ? "var(--text-primary)" : "var(--text-dim)",
                     transition: "color 0.3s ease, transform 0.3s ease",
                     display: "flex",
                     alignItems: "center",
-                    transform: hovered ? "translateX(2px)" : "translateX(0)",
+                    transform: hovered ? "scale(1.15)" : "scale(1)",
                 }}
             >
                 <GithubIcon />
@@ -187,7 +202,7 @@ const TeamSection = () => {
                 id="team"
                 style={{
                     backgroundColor: "var(--bg-secondary)",
-                    padding: "120px 7vw",
+                    padding: "clamp(56px, 10vw, 120px) 7vw",
                 }}
             >
                 {/* Header */}
@@ -219,7 +234,7 @@ const TeamSection = () => {
                         lineHeight: 1.6,
                         letterSpacing: "0.01em"
                     }}>
-                        A 4-member engineering team focused on building scalable digital systems.
+                        A focused engineering team building structured, scalable, and real-world digital systems.
                     </p>
                 </motion.div>
 

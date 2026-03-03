@@ -152,7 +152,7 @@ const WhatWeBuildSection = () => {
                 id="what-we-build"
                 style={{
                     backgroundColor: "var(--bg-primary)",
-                    padding: "120px 7vw",
+                    padding: "clamp(56px, 10vw, 120px) 7vw",
                 }}
             >
                 {/* Section header */}

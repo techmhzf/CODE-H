@@ -42,7 +42,7 @@ const StepRow = ({ num, title, desc, index, isActive }) => {
                 <div
                     style={{
                         position: "absolute",
-                        left: "-25px",
+                        left: "clamp(-18px, -3vw, -25px)",
                         top: "14px",
                         width: "12px",
                         height: "12px",
@@ -132,7 +132,7 @@ const OurApproachSection = () => {
             ref={sectionRef}
             style={{
                 backgroundColor: "var(--bg-primary)",
-                padding: "120px 7vw",
+                padding: "clamp(56px, 10vw, 120px) 7vw",
                 position: "relative",
                 overflow: "hidden",
             }}
@@ -181,12 +181,12 @@ const OurApproachSection = () => {
             </motion.div>
 
             {/* Steps Container */}
-            <div style={{ position: "relative", maxWidth: "800px" }}>
+            <div className="approach-steps-container" style={{ position: "relative", maxWidth: "800px" }}>
                 {/* Vertical Timeline Line */}
                 <div
                     style={{
                         position: "absolute",
-                        left: "-20px",
+                        left: "clamp(-13px, -2vw, -20px)",
                         top: "20px",
                         bottom: "40px",
                         width: "1px",

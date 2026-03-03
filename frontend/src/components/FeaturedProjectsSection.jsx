@@ -1,5 +1,5 @@
 // FeaturedProjectsSection.jsx — Showcase with gradient hover borders & framer-motion stagger
-import { useRef, useState } from "react"
+import { useRef, useState, useCallback } from "react"
 import { motion } from "framer-motion"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 
@@ -25,7 +25,7 @@ const projects = [
         name: "C-TRACE",
         tag: "SIH 2025 Winning Project",
         description: "National-level problem-solving system.",
-        githubUrl: "https://github.com",
+        githubUrl: "https://github.com/pixelminds25/C-TRACE",
         category: "PROBLEM SOLVING",
         gradient: "linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(245,158,11,0.03) 100%)",
     },
@@ -33,7 +33,7 @@ const projects = [
         id: "stms",
         name: "STMS – Super Imli Traders Management System",
         description: "Custom inventory and billing system for a wholesale business.",
-        githubUrl: "https://github.com",
+        githubUrl: "https://github.com/chlabs2025/STMS",
         category: "FULL STACK",
         gradient: "linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0.02) 100%)",
     },
@@ -41,7 +41,7 @@ const projects = [
         id: "smartexam",
         name: "SmartExam",
         description: "Online examination and proctoring platform.",
-        githubUrl: "https://github.com",
+        githubUrl: "https://github.com/Faraaz1806/SmartExam",
         category: "FULL STACK",
         gradient: "linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(139,92,246,0.02) 100%)",
     },
@@ -49,7 +49,7 @@ const projects = [
         id: "stylescript",
         name: "StyleScript",
         description: "Smart code and document styling automation tool.",
-        githubUrl: "https://github.com",
+        githubUrl: "https://github.com/TaufiqueUmar/StyleScript",
         category: "AI / ML",
         gradient: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.02) 100%)",
     },
@@ -65,7 +65,7 @@ const projects = [
         id: "bloomtale",
         name: "BloomTale",
         description: "Creative digital content platform.",
-        githubUrl: "https://github.com",
+        githubUrl: "https://github.com/InputBlock/Bloom-Tale/",
         viewUrl: "https://bloomtale.cloud/home",
         category: "FULL STACK",
         gradient: "linear-gradient(135deg, rgba(236,72,153,0.1) 0%, rgba(236,72,153,0.02) 100%)",
@@ -276,8 +276,25 @@ const ProjectCard = ({ project, index, visible }) => {
 const FeaturedProjectsSection = () => {
     const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.1 })
     const [activeCategory, setActiveCategory] = useState("ALL PROJECTS")
+    const filterScrollRef = useRef(null)
 
     const categories = ["ALL PROJECTS", "AI / ML", "BLOCKCHAIN", "FULL STACK", "PROBLEM SOLVING"]
+
+    const stepCategory = useCallback((dir) => {
+        setActiveCategory(prev => {
+            const currentIdx = categories.indexOf(prev)
+            const nextIdx = (currentIdx + dir + categories.length) % categories.length
+            const nextCat = categories[nextIdx]
+            // Scroll the active pill into view after state update
+            setTimeout(() => {
+                if (filterScrollRef.current) {
+                    const pill = filterScrollRef.current.children[nextIdx]
+                    if (pill) pill.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" })
+                }
+            }, 0)
+            return nextCat
+        })
+    }, [])
 
     const filteredProjects = activeCategory === "ALL PROJECTS"
         ? projects
@@ -336,28 +353,59 @@ const FeaturedProjectsSection = () => {
           box-shadow: 0 2px 14px rgba(37,99,235,0.2);
           color: #ffffff;
         }
+        .filter-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 50px;
+            max-width: 100%;
+        }
+        .filter-scroll-btn {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            color: #94a3b8;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s cubic-bezier(0.16,1,0.3,1);
+            user-select: none;
+        }
+        .filter-scroll-btn:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.22);
+            color: #f8fafc;
+            transform: scale(1.08);
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+        }
+        .filter-scroll-btn:active {
+            transform: scale(0.95);
+        }
         .filter-container {
             background: rgba(5,7,10,0.8);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             padding: 8px;
-            border-radius: 99px;
-            display: inline-flex;
+            border-radius: 9999px;
+            display: flex;
             gap: 4px;
-            margin-bottom: 50px;
             border: 1px solid rgba(255,255,255,0.06);
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            flex: 1;
+            min-width: 0;
         }
-        @media (max-width: 600px) {
-            .filter-container {
-                flex-wrap: wrap;
-                border-radius: 20px;
-                justify-content: center;
-                width: 100%;
-            }
-        }
+        .filter-container::-webkit-scrollbar { display: none; }
         .ref-pill {
             padding: 10px 24px;
-            border-radius: 99px;
+            border-radius: 9999px;
             font-size: 0.72rem;
             font-weight: 700;
             letter-spacing: 0.1em;
@@ -383,7 +431,7 @@ const FeaturedProjectsSection = () => {
                 id="featured-projects"
                 style={{
                     backgroundColor: "var(--bg-secondary)",
-                    padding: "120px 7vw",
+                    padding: "clamp(56px, 10vw, 120px) 7vw",
                 }}
             >
                 {/* Section header */}
@@ -432,16 +480,40 @@ const FeaturedProjectsSection = () => {
                         marginBottom: "30px"
                     }}
                 >
-                    <div className="filter-container">
-                        {categories.map((cat) => (
-                            <div
-                                key={cat}
-                                onClick={() => setActiveCategory(cat)}
-                                className={`ref-pill ${activeCategory === cat ? "active" : ""}`}
-                            >
-                                {cat}
-                            </div>
-                        ))}
+                    <div className="filter-wrapper">
+                        {/* Left scroll button */}
+                        <button
+                            className="filter-scroll-btn"
+                            onClick={() => stepCategory(-1)}
+                            aria-label="Previous category"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="15 18 9 12 15 6" />
+                            </svg>
+                        </button>
+
+                        <div className="filter-container" ref={filterScrollRef}>
+                            {categories.map((cat) => (
+                                <div
+                                    key={cat}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`ref-pill ${activeCategory === cat ? "active" : ""}`}
+                                >
+                                    {cat}
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Right scroll button */}
+                        <button
+                            className="filter-scroll-btn"
+                            onClick={() => stepCategory(1)}
+                            aria-label="Next category"
+                        >
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                <polyline points="9 18 15 12 9 6" />
+                            </svg>
+                        </button>
                     </div>
                 </motion.div>
 
