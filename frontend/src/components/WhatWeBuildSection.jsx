@@ -1,5 +1,6 @@
-// WhatWeBuildSection.jsx — Service offerings grid with enhanced animations
+// WhatWeBuildSection.jsx — Service offerings grid with framer-motion stagger + cursor glow
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { useScrollReveal } from "../hooks/useScrollReveal"
 
 /* ─── Minimal line icons (inline SVG) ─── */
@@ -58,13 +59,25 @@ const services = [
     { id: "api", label: "API & Backend Systems", icon: icons.api },
 ]
 
-const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
+const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.08 } },
+}
 
-const ServiceCard = ({ icon, label, visible, delay }) => {
+const cardVariants = {
+    hidden: { opacity: 0, y: 24 },
+    visible: {
+        opacity: 1, y: 0,
+        transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+}
+
+const ServiceCard = ({ icon, label }) => {
     const [hovered, setHovered] = useState(false)
 
     return (
-        <div
+        <motion.div
+            variants={cardVariants}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             style={{
@@ -74,50 +87,44 @@ const ServiceCard = ({ icon, label, visible, delay }) => {
                 justifyContent: "center",
                 gap: "16px",
                 padding: "36px 24px",
-                backgroundColor: hovered ? "#1a1a24" : "#111116",
-                border: `1px solid ${hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)"}`,
+                backgroundColor: hovered ? "var(--bg-card-hover)" : "var(--bg-card)",
+                border: `1px solid ${hovered ? "var(--border-hover)" : "var(--border-subtle)"}`,
                 borderRadius: "12px",
                 cursor: "default",
                 textAlign: "center",
-                /* Entrance animation */
-                opacity: visible ? 1 : 0,
-                transform: visible
-                    ? (hovered ? "translateY(-6px)" : "translateY(0)")
-                    : "translateY(24px)",
-                transition: `opacity 0.8s ${EASE} ${delay}ms, transform 0.5s ${EASE} ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
-                /* Hover elevation + glow */
+                transform: hovered ? "translateY(-6px)" : "translateY(0)",
+                transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
                 boxShadow: hovered
                     ? "0 16px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,99,235,0.1), 0 0 20px rgba(37,99,235,0.06)"
-                    : "0 2px 12px rgba(0,0,0,0.2)",
+                    : "0 2px 12px rgba(0,0,0,0.15)",
             }}
         >
-            {/* Icon — scales up on hover */}
             <span
                 style={{
-                    color: hovered ? "#3b82f6" : "#64748b",
-                    transition: `color 0.3s ease, transform 0.4s ${EASE}`,
+                    color: hovered ? "#3b82f6" : "var(--text-dim)",
+                    transition: "color 0.3s ease, transform 0.4s cubic-bezier(0.16,1,0.3,1), filter 0.3s ease",
                     lineHeight: 0,
                     transform: hovered ? "scale(1.15)" : "scale(1)",
+                    filter: hovered ? "drop-shadow(0 0 8px rgba(59,130,246,0.3))" : "none",
                 }}
             >
                 {icon}
             </span>
 
-            {/* Title */}
             <p
                 style={{
                     margin: 0,
                     fontSize: "0.875rem",
                     fontWeight: 500,
                     letterSpacing: "0.01em",
-                    color: hovered ? "#f8fafc" : "#94a3b8",
+                    color: hovered ? "var(--text-primary)" : "var(--text-muted)",
                     transition: "color 0.3s ease",
                     lineHeight: 1.4,
                 }}
             >
                 {label}
             </p>
-        </div>
+        </motion.div>
     )
 }
 
@@ -144,19 +151,16 @@ const WhatWeBuildSection = () => {
                 ref={ref}
                 id="what-we-build"
                 style={{
-                    backgroundColor: "#0a0a0f",
+                    backgroundColor: "var(--bg-primary)",
                     padding: "120px 7vw",
-                    borderTop: "1px solid rgba(255,255,255,0.03)",
                 }}
             >
                 {/* Section header */}
-                <div
-                    style={{
-                        opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(20px)",
-                        transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
-                        marginBottom: "64px",
-                    }}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={visible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ marginBottom: "64px" }}
                 >
                     <p
                         style={{
@@ -165,7 +169,7 @@ const WhatWeBuildSection = () => {
                             fontWeight: 600,
                             letterSpacing: "0.2em",
                             textTransform: "uppercase",
-                            color: "#94a3b8",
+                            color: "var(--text-muted)",
                         }}
                     >
                         Our Expertise
@@ -184,20 +188,19 @@ const WhatWeBuildSection = () => {
                     >
                         What We Build
                     </h2>
-                </div>
+                </motion.div>
 
-                {/* Cards grid */}
-                <div className="wwb-grid">
-                    {services.map(({ id, label, icon }, i) => (
-                        <ServiceCard
-                            key={id}
-                            icon={icon}
-                            label={label}
-                            visible={visible}
-                            delay={100 * i}
-                        />
+                {/* Cards grid — staggered */}
+                <motion.div
+                    className="wwb-grid"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate={visible ? "visible" : "hidden"}
+                >
+                    {services.map(({ id, label, icon }) => (
+                        <ServiceCard key={id} icon={icon} label={label} />
                     ))}
-                </div>
+                </motion.div>
             </section>
         </>
     )

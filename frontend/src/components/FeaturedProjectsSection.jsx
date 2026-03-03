@@ -1,8 +1,7 @@
-// FeaturedProjectsSection.jsx — Showcase with refined 3D tilt and animations
+// FeaturedProjectsSection.jsx — Showcase with gradient hover borders & framer-motion stagger
 import { useRef, useState } from "react"
+import { motion } from "framer-motion"
 import { useScrollReveal } from "../hooks/useScrollReveal"
-
-const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 /* GitHub icon SVG */
 const GitHubIcon = () => (
@@ -28,6 +27,7 @@ const projects = [
         description: "National-level problem-solving system.",
         githubUrl: "https://github.com",
         category: "PROBLEM SOLVING",
+        gradient: "linear-gradient(135deg, rgba(245,158,11,0.12) 0%, rgba(245,158,11,0.03) 100%)",
     },
     {
         id: "stms",
@@ -35,6 +35,7 @@ const projects = [
         description: "Custom inventory and billing system for a wholesale business.",
         githubUrl: "https://github.com",
         category: "FULL STACK",
+        gradient: "linear-gradient(135deg, rgba(59,130,246,0.1) 0%, rgba(59,130,246,0.02) 100%)",
     },
     {
         id: "smartexam",
@@ -42,6 +43,7 @@ const projects = [
         description: "Online examination and proctoring platform.",
         githubUrl: "https://github.com",
         category: "FULL STACK",
+        gradient: "linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(139,92,246,0.02) 100%)",
     },
     {
         id: "stylescript",
@@ -49,6 +51,7 @@ const projects = [
         description: "Smart code and document styling automation tool.",
         githubUrl: "https://github.com",
         category: "AI / ML",
+        gradient: "linear-gradient(135deg, rgba(16,185,129,0.1) 0%, rgba(16,185,129,0.02) 100%)",
     },
     {
         id: "pharmacy",
@@ -56,6 +59,7 @@ const projects = [
         description: "Retail medical billing system.",
         githubUrl: "https://github.com",
         category: "FULL STACK",
+        gradient: "linear-gradient(135deg, rgba(59,130,246,0.08) 0%, rgba(37,99,235,0.02) 100%)",
     },
     {
         id: "bloomtale",
@@ -64,6 +68,7 @@ const projects = [
         githubUrl: "https://github.com",
         viewUrl: "https://bloomtale.cloud/home",
         category: "FULL STACK",
+        gradient: "linear-gradient(135deg, rgba(236,72,153,0.1) 0%, rgba(236,72,153,0.02) 100%)",
     },
     {
         id: "mindseeds",
@@ -71,12 +76,23 @@ const projects = [
         description: "Educational concept system.",
         githubUrl: "https://github.com",
         category: "PROBLEM SOLVING",
+        gradient: "linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 100%)",
     },
 ]
 
-const ProjectCard = ({ project, visible, delay }) => {
+const cardVariants = {
+    hidden: { opacity: 0, y: 28 },
+    visible: (i) => ({
+        opacity: 1,
+        y: 0,
+        transition: { duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] },
+    }),
+}
+
+const ProjectCard = ({ project, index, visible }) => {
     const [tilt, setTilt] = useState({ x: 0, y: 0 })
     const [hovered, setHovered] = useState(false)
+    const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
     const cardRef = useRef(null)
 
     const handleMouseMove = (e) => {
@@ -87,8 +103,12 @@ const ProjectCard = ({ project, visible, delay }) => {
         const cy = rect.top + rect.height / 2
         const dx = (e.clientX - cx) / (rect.width / 2)
         const dy = (e.clientY - cy) / (rect.height / 2)
-        // Reduced from ±8° to ±5° for subtlety
         setTilt({ x: dy * -5, y: dx * 5 })
+        // Cursor glow position
+        setMousePos({
+            x: e.clientX - rect.left,
+            y: e.clientY - rect.top,
+        })
     }
 
     const handleMouseLeave = () => {
@@ -97,47 +117,81 @@ const ProjectCard = ({ project, visible, delay }) => {
     }
 
     return (
-        <div
+        <motion.div
             ref={cardRef}
+            custom={index}
+            variants={cardVariants}
+            initial="hidden"
+            animate={visible ? "visible" : "hidden"}
             onMouseMove={handleMouseMove}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={handleMouseLeave}
             className="fp-card"
             style={{
-                opacity: visible ? 1 : 0,
-                transform: visible
-                    ? `translateY(${hovered ? "-4px" : "0"}) perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
-                    : "translateY(28px) perspective(800px) rotateX(0deg) rotateY(0deg)",
-                transition: `opacity 0.8s ${EASE} ${delay}ms, transform ${hovered ? "0.1s" : `0.7s ${EASE}`}${hovered ? "" : ` ${delay}ms`}, box-shadow 0.4s ease`,
+                position: "relative",
+                transform: hovered
+                    ? `translateY(-4px) perspective(800px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg)`
+                    : "translateY(0) perspective(800px) rotateX(0deg) rotateY(0deg)",
+                transition: `transform ${hovered ? "0.1s" : "0.5s cubic-bezier(0.16,1,0.3,1)"}, box-shadow 0.4s ease`,
                 willChange: "transform",
-                background: hovered ? "#1a1a24" : "#111116",
-                border: `1px solid ${hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)"}`,
+                background: hovered ? "var(--bg-card-hover)" : "var(--bg-card)",
+                border: `1px solid ${hovered ? "var(--border-hover)" : "var(--border-subtle)"}`,
                 borderRadius: "14px",
                 padding: "0",
                 overflow: "hidden",
                 cursor: "default",
-                /* Deeper shadow on hover */
                 boxShadow: hovered
                     ? "0 24px 64px rgba(0,0,0,0.45), 0 0 0 1px rgba(37,99,235,0.12), 0 0 30px rgba(37,99,235,0.05)"
-                    : "0 4px 24px rgba(0,0,0,0.2)",
+                    : "0 4px 24px rgba(0,0,0,0.15)",
             }}
         >
-            {/* Blue accent line at top — glows on hover */}
+            {/* Cursor-follow glow */}
+            {hovered && (
+                <div
+                    style={{
+                        position: "absolute",
+                        width: "200px",
+                        height: "200px",
+                        borderRadius: "50%",
+                        background: "radial-gradient(circle, rgba(59,130,246,0.1) 0%, transparent 70%)",
+                        left: mousePos.x - 100,
+                        top: mousePos.y - 100,
+                        pointerEvents: "none",
+                        zIndex: 0,
+                        transition: "left 0.05s, top 0.05s",
+                    }}
+                />
+            )}
+
+            {/* Top gradient preview strip */}
             <div
                 style={{
-                    height: "3px",
-                    background: hovered
-                        ? "linear-gradient(90deg, #2563eb, #60a5fa, #2563eb)"
-                        : "linear-gradient(90deg, #3b82f6, #60a5fa)",
-                    backgroundSize: hovered ? "200% 100%" : "100% 100%",
-                    transition: "background 0.4s ease, box-shadow 0.4s ease",
-                    borderRadius: "14px 14px 0 0",
-                    boxShadow: hovered ? "0 0 12px rgba(37,99,235,0.4)" : "none",
+                    height: "48px",
+                    background: project.gradient,
+                    position: "relative",
+                    overflow: "hidden",
                 }}
-            />
+            >
+                {/* Blue accent line */}
+                <div
+                    style={{
+                        position: "absolute",
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        height: "2px",
+                        background: hovered
+                            ? "linear-gradient(90deg, #2563eb, #60a5fa, #2563eb)"
+                            : "linear-gradient(90deg, #3b82f6, #60a5fa)",
+                        backgroundSize: hovered ? "200% 100%" : "100% 100%",
+                        transition: "background 0.4s ease, box-shadow 0.4s ease",
+                        boxShadow: hovered ? "0 0 12px rgba(37,99,235,0.4)" : "none",
+                    }}
+                />
+            </div>
 
             {/* Card body */}
-            <div style={{ padding: "22px 24px 24px" }}>
+            <div style={{ padding: "20px 24px 24px", position: "relative", zIndex: 1 }}>
                 {/* Tag badge */}
                 {(project.tag || project.category) && (
                     <span
@@ -148,7 +202,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                             fontWeight: 700,
                             letterSpacing: "0.12em",
                             textTransform: "uppercase",
-                            color: "#2563eb",
+                            color: "var(--accent-blue)",
                             background: "rgba(59,130,246,0.08)",
                             border: "1px solid rgba(59,130,246,0.15)",
                             borderRadius: "4px",
@@ -166,7 +220,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                         fontSize: "1rem",
                         fontWeight: 650,
                         letterSpacing: "-0.015em",
-                        color: hovered ? "#f8fafc" : "#e2e8f0",
+                        color: hovered ? "var(--text-primary)" : "var(--text-secondary)",
                         transition: "color 0.3s ease",
                         lineHeight: 1.3,
                     }}
@@ -179,7 +233,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                     style={{
                         margin: "0 0 20px",
                         fontSize: "0.82rem",
-                        color: "#94a3b8",
+                        color: "var(--text-muted)",
                         lineHeight: 1.5,
                         whiteSpace: "nowrap",
                         overflow: "hidden",
@@ -215,7 +269,7 @@ const ProjectCard = ({ project, visible, delay }) => {
                     )}
                 </div>
             </div>
-        </div>
+        </motion.div>
     )
 }
 
@@ -283,13 +337,15 @@ const FeaturedProjectsSection = () => {
           color: #ffffff;
         }
         .filter-container {
-            background: #05070a; 
+            background: rgba(5,7,10,0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             padding: 8px;
             border-radius: 99px;
             display: inline-flex;
             gap: 4px;
             margin-bottom: 50px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.06);
         }
         @media (max-width: 600px) {
             .filter-container {
@@ -318,6 +374,7 @@ const FeaturedProjectsSection = () => {
         .ref-pill.active {
             background: #ffffff;
             color: #000000 !important;
+            box-shadow: 0 4px 16px rgba(255,255,255,0.1);
         }
       `}</style>
 
@@ -325,19 +382,16 @@ const FeaturedProjectsSection = () => {
                 ref={ref}
                 id="featured-projects"
                 style={{
-                    backgroundColor: "#09090b",
+                    backgroundColor: "var(--bg-secondary)",
                     padding: "120px 7vw",
-                    borderTop: "1px solid rgba(255,255,255,0.03)",
                 }}
             >
                 {/* Section header */}
-                <div
-                    style={{
-                        opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(20px)",
-                        transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
-                        marginBottom: "48px",
-                    }}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={visible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ marginBottom: "48px" }}
                 >
                     <p
                         style={{
@@ -346,7 +400,7 @@ const FeaturedProjectsSection = () => {
                             fontWeight: 600,
                             letterSpacing: "0.2em",
                             textTransform: "uppercase",
-                            color: "#3b82f6",
+                            color: "var(--accent-blue-light)",
                         }}
                     >
                         Our Work
@@ -365,14 +419,14 @@ const FeaturedProjectsSection = () => {
                     >
                         Featured Projects
                     </h2>
-                </div>
+                </motion.div>
 
                 {/* Filter Navigation */}
-                <div
+                <motion.div
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={visible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.9, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
                     style={{
-                        opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(16px)",
-                        transition: `opacity 0.9s ${EASE} 0.15s, transform 0.9s ${EASE} 0.15s`,
                         display: "flex",
                         justifyContent: "flex-start",
                         marginBottom: "30px"
@@ -389,7 +443,7 @@ const FeaturedProjectsSection = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Cards grid */}
                 <div className="fp-grid">
@@ -397,8 +451,8 @@ const FeaturedProjectsSection = () => {
                         <ProjectCard
                             key={project.id}
                             project={project}
+                            index={i}
                             visible={visible}
-                            delay={100 * i}
                         />
                     ))}
                 </div>

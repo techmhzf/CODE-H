@@ -1,8 +1,7 @@
-// TeamSection.jsx — Engineering team with polished scroll animations
+// TeamSection.jsx — Engineering team with framer-motion stagger + enhanced cards
 import { useState } from "react"
+import { motion } from "framer-motion"
 import { useScrollReveal } from "../hooks/useScrollReveal"
-
-const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 const team = [
     {
@@ -37,42 +36,88 @@ const GithubIcon = () => (
     </svg>
 )
 
-const MemberCard = ({ member, visible, delay }) => {
+const containerVariants = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.1 } },
+}
+
+const cardVariants = {
+    hidden: { opacity: 0, y: 28 },
+    visible: {
+        opacity: 1, y: 0,
+        transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+    },
+}
+
+const MemberCard = ({ member }) => {
     const [hovered, setHovered] = useState(false)
 
+    // Generate initials for avatar placeholder
+    const initials = member.name.split(" ").map(n => n[0]).join("").toUpperCase()
+
     return (
-        <div
+        <motion.div
+            variants={cardVariants}
             onMouseEnter={() => setHovered(true)}
             onMouseLeave={() => setHovered(false)}
             style={{
                 position: "relative",
                 padding: "32px 24px",
-                backgroundColor: hovered ? "#1a1a24" : "#111116",
-                border: "1px solid rgba(255,255,255,0.06)",
-                borderRadius: "12px",
+                backgroundColor: hovered ? "var(--bg-card-hover)" : "var(--bg-card)",
+                border: `1px solid ${hovered ? "var(--border-hover)" : "var(--border-subtle)"}`,
+                borderRadius: "14px",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "flex-start",
                 gap: "16px",
                 cursor: "default",
-                /* Entrance Animation */
-                opacity: visible ? 1 : 0,
-                transform: visible
-                    ? (hovered ? "translateY(-6px)" : "translateY(0)")
-                    : "translateY(28px)",
-                transition: `opacity 0.8s ${EASE} ${delay}ms, transform 0.5s ${EASE} ${hovered ? 0 : delay}ms, border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease`,
+                overflow: "hidden",
+                transform: hovered ? "translateY(-6px)" : "translateY(0)",
+                transition: "transform 0.4s cubic-bezier(0.16,1,0.3,1), border-color 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease",
                 boxShadow: hovered
                     ? "0 16px 40px -8px rgba(0,0,0,0.5), 0 0 0 1px rgba(37,99,235,0.1)"
-                    : "none",
-                borderColor: hovered ? "rgba(37,99,235,0.4)" : "rgba(255,255,255,0.06)",
+                    : "0 2px 12px rgba(0,0,0,0.1)",
             }}
         >
+            {/* Top accent line */}
+            <div style={{
+                position: "absolute",
+                top: 0,
+                left: "24px",
+                right: "24px",
+                height: "1px",
+                background: "linear-gradient(90deg, transparent, rgba(37,99,235,0.4), transparent)",
+                opacity: hovered ? 1 : 0,
+                transition: "opacity 0.4s ease"
+            }} />
+
+            {/* Avatar circle */}
+            <div style={{
+                width: "48px",
+                height: "48px",
+                borderRadius: "12px",
+                background: hovered
+                    ? "linear-gradient(135deg, rgba(37,99,235,0.2), rgba(139,92,246,0.2))"
+                    : "rgba(255,255,255,0.04)",
+                border: `1px solid ${hovered ? "rgba(59,130,246,0.3)" : "var(--border-subtle)"}`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "0.82rem",
+                fontWeight: 700,
+                color: hovered ? "var(--accent-blue-light)" : "var(--text-dim)",
+                transition: "all 0.3s ease",
+                letterSpacing: "0.05em",
+            }}>
+                {initials}
+            </div>
+
             <div style={{ width: "100%" }}>
                 <h3 style={{
                     margin: "0 0 4px",
                     fontSize: "1.1rem",
                     fontWeight: 600,
-                    color: "#f8fafc",
+                    color: "var(--text-primary)",
                     letterSpacing: "-0.01em"
                 }}>
                     {member.name}
@@ -81,7 +126,7 @@ const MemberCard = ({ member, visible, delay }) => {
                     margin: 0,
                     fontSize: "0.8rem",
                     fontWeight: 500,
-                    color: "#3b82f6",
+                    color: "var(--accent-blue-light)",
                     textTransform: "uppercase",
                     letterSpacing: "0.05em"
                 }}>
@@ -93,7 +138,7 @@ const MemberCard = ({ member, visible, delay }) => {
                 margin: 0,
                 fontSize: "0.85rem",
                 lineHeight: 1.5,
-                color: "#94a3b8",
+                color: "var(--text-muted)",
                 maxWidth: "200px"
             }}>
                 {member.spec}
@@ -104,28 +149,17 @@ const MemberCard = ({ member, visible, delay }) => {
                 target="_blank"
                 rel="noopener noreferrer"
                 style={{
-                    marginTop: "8px",
-                    color: hovered ? "#f8fafc" : "#64748b",
-                    transition: "color 0.3s ease",
+                    marginTop: "4px",
+                    color: hovered ? "var(--text-primary)" : "var(--text-dim)",
+                    transition: "color 0.3s ease, transform 0.3s ease",
                     display: "flex",
-                    alignItems: "center"
+                    alignItems: "center",
+                    transform: hovered ? "translateX(2px)" : "translateX(0)",
                 }}
             >
                 <GithubIcon />
             </a>
-
-            {/* Top accent line visible on hover */}
-            <div style={{
-                position: "absolute",
-                top: 0,
-                left: "24px",
-                right: "24px",
-                height: "1px",
-                background: "linear-gradient(90deg, transparent, rgba(37,99,235,0.4), transparent)",
-                opacity: hovered ? 1 : 0,
-                transition: "opacity 0.4s ease"
-            }} />
-        </div>
+        </motion.div>
     )
 }
 
@@ -152,18 +186,17 @@ const TeamSection = () => {
                 ref={ref}
                 id="team"
                 style={{
-                    backgroundColor: "#09090b",
+                    backgroundColor: "var(--bg-secondary)",
                     padding: "120px 7vw",
-                    borderTop: "1px solid rgba(255,255,255,0.03)",
                 }}
             >
                 {/* Header */}
-                <div style={{
-                    marginBottom: "64px",
-                    opacity: visible ? 1 : 0,
-                    transform: visible ? "translateY(0)" : "translateY(24px)",
-                    transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
-                }}>
+                <motion.div
+                    initial={{ opacity: 0, y: 24 }}
+                    animate={visible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ marginBottom: "64px" }}
+                >
                     <h2
                         className="text-transparent bg-clip-text"
                         style={{
@@ -181,26 +214,26 @@ const TeamSection = () => {
                     <p style={{
                         margin: 0,
                         fontSize: "1.05rem",
-                        color: "#94a3b8",
+                        color: "var(--text-muted)",
                         maxWidth: "400px",
                         lineHeight: 1.6,
                         letterSpacing: "0.01em"
                     }}>
                         A 4-member engineering team focused on building scalable digital systems.
                     </p>
-                </div>
+                </motion.div>
 
-                {/* Team Grid */}
-                <div className="team-grid">
-                    {team.map((m, i) => (
-                        <MemberCard
-                            key={m.name}
-                            member={m}
-                            visible={visible}
-                            delay={120 * i}
-                        />
+                {/* Team Grid — staggered */}
+                <motion.div
+                    className="team-grid"
+                    variants={containerVariants}
+                    initial="hidden"
+                    animate={visible ? "visible" : "hidden"}
+                >
+                    {team.map((m) => (
+                        <MemberCard key={m.name} member={m} />
                     ))}
-                </div>
+                </motion.div>
             </section>
         </>
     )

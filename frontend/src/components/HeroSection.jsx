@@ -1,6 +1,6 @@
-// HeroSection.jsx — Full-screen hero with scroll-based parallax
-// 3D object scales down + shifts right on scroll, text fades slightly
-import { useEffect, useState, useCallback } from "react"
+// HeroSection.jsx — Full-screen hero with mesh gradient orbs, parallax, and scroll indicator
+import { useEffect, useState } from "react"
+import { motion } from "framer-motion"
 import HeroScene from "./HeroScene"
 
 const EASING = "cubic-bezier(0.16, 1, 0.3, 1)"
@@ -14,7 +14,6 @@ const HeroSection = () => {
         return () => clearTimeout(t)
     }, [])
 
-    // Scroll listener for parallax — rAF throttled
     useEffect(() => {
         let rafId = null
         const onScroll = () => {
@@ -31,55 +30,93 @@ const HeroSection = () => {
         }
     }, [])
 
-    // Clamp scroll influence to the hero viewport height
     const maxScroll = typeof window !== "undefined" ? window.innerHeight : 900
-    const t = Math.min(scrollY / maxScroll, 1) // 0 → 1
+    const t = Math.min(scrollY / maxScroll, 1)
 
-    // Text parallax: fades to 0.15 opacity, moves up 60px
     const textOpacity = 1 - t * 0.85
     const textTranslateY = -t * 60
-
-    // 3D object parallax: scales to 0.82, shifts right 40px
     const cubeScale = 1 - t * 0.18
     const cubeTranslateX = t * 40
 
-    // Background glow: slower parallax rate (depth shift)
-    const glowTranslateY = -t * 30
-
     return (
-        <section className="relative min-h-screen w-full bg-[#0a0a0f] flex items-center overflow-hidden px-[7vw]">
-
-            {/* Subtle radial glow — parallax depth */}
+        <section
+            id="home"
+            className="relative min-h-screen w-full flex items-center overflow-hidden px-[7vw]"
+            style={{ backgroundColor: "var(--bg-primary)" }}
+        >
+            {/* ── Animated Mesh Gradient Orbs ── */}
             <div
-                className="pointer-events-none absolute right-0 top-1/2 w-[55vw] h-[55vw] max-w-[700px] max-h-[700px] rounded-full"
-                style={{
-                    background: "radial-gradient(circle, rgba(99,102,241,0.07) 0%, rgba(99,102,241,0.02) 40%, transparent 70%)",
-                    transform: `translate3d(0, calc(-50% + ${glowTranslateY}px), 0)`,
-                    willChange: "transform",
-                }}
-            />
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 overflow-hidden"
+            >
+                {/* Blue orb — top right */}
+                <div
+                    style={{
+                        position: "absolute",
+                        top: "10%",
+                        right: "5%",
+                        width: "clamp(300px, 50vw, 700px)",
+                        height: "clamp(300px, 50vw, 700px)",
+                        borderRadius: "50%",
+                        background: "radial-gradient(circle, rgba(37,99,235,0.1) 0%, rgba(37,99,235,0.03) 40%, transparent 70%)",
+                        animation: "meshFloat1 18s ease-in-out infinite",
+                        filter: "blur(40px)",
+                    }}
+                />
+                {/* Violet orb — bottom left */}
+                <div
+                    style={{
+                        position: "absolute",
+                        bottom: "10%",
+                        left: "-5%",
+                        width: "clamp(250px, 40vw, 600px)",
+                        height: "clamp(250px, 40vw, 600px)",
+                        borderRadius: "50%",
+                        background: "radial-gradient(circle, rgba(139,92,246,0.08) 0%, rgba(139,92,246,0.02) 40%, transparent 70%)",
+                        animation: "meshFloat2 22s ease-in-out infinite",
+                        filter: "blur(50px)",
+                    }}
+                />
+                {/* Subtle grid pattern */}
+                <div
+                    style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage: `
+                            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px)
+                        `,
+                        backgroundSize: "64px 64px",
+                        maskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, black 20%, transparent 70%)",
+                        WebkitMaskImage: "radial-gradient(ellipse 60% 60% at 50% 50%, black 20%, transparent 70%)",
+                    }}
+                />
+            </div>
 
             {/* ── Grid wrapper ── */}
             <div className="relative z-10 w-full grid grid-cols-1 lg:grid-cols-2 items-center gap-12 py-16">
 
-                {/* ── Left: Text content — fades on scroll ── */}
-                <div
+                {/* ── Left: Text content ── */}
+                <motion.div
+                    initial={{ opacity: 0, y: 32 }}
+                    animate={{ opacity: visible ? textOpacity : 0, y: visible ? textTranslateY : 20 }}
+                    transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
                     style={{
                         display: "flex",
                         flexDirection: "column",
                         gap: "24px",
-                        opacity: visible ? textOpacity : 0,
-                        transform: visible
-                            ? `translate3d(0, ${textTranslateY}px, 0)`
-                            : "translate3d(0, 20px, 0)",
-                        transition: visible ? "none" : `opacity 0.7s ${EASING}, transform 0.7s ${EASING}`,
                         willChange: "transform, opacity",
                     }}
                 >
-                    {/* Small label */}
-                    <span className="w-fit text-[0.72rem] font-semibold tracking-[0.22em] uppercase text-violet-400 border border-violet-500/20 bg-violet-500/[0.04] px-3 py-1 rounded-full">
+                    {/* Badge */}
+                    <motion.span
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        transition={{ delay: 0.15, duration: 0.5 }}
+                        className="w-fit text-[0.72rem] font-semibold tracking-[0.22em] uppercase text-violet-400 border border-violet-500/20 bg-violet-500/[0.04] px-3 py-1 rounded-full"
+                    >
                         CODE-H
-                    </span>
+                    </motion.span>
 
                     {/* Main headline */}
                     <h1 className="text-5xl xl:text-[4.4rem] font-extrabold leading-[1.06] tracking-[-0.03em] text-transparent bg-clip-text"
@@ -97,24 +134,76 @@ const HeroSection = () => {
                         We build custom software systems for real-world businesses.
                     </p>
 
-                    {/* Buttons */}
+                    {/* Buttons — improved with glows */}
                     <div className="flex flex-wrap gap-3 mt-2">
                         <a
-                            href="#work"
-                            className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold tracking-wide rounded-lg border border-transparent transition-all duration-200 hover:shadow-[0_4px_28px_rgba(37,99,235,0.4)] hover:-translate-y-px active:translate-y-0"
+                            href="#featured-projects"
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "14px 28px",
+                                background: "linear-gradient(135deg, #2563eb, #3b82f6, #6366f1)",
+                                backgroundSize: "200% auto",
+                                color: "#fff",
+                                fontSize: "0.875rem",
+                                fontWeight: 700,
+                                letterSpacing: "0.02em",
+                                borderRadius: "12px",
+                                border: "1px solid rgba(59,130,246,0.3)",
+                                textDecoration: "none",
+                                transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
+                                boxShadow: "0 8px 32px -8px rgba(37,99,235,0.4)",
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.boxShadow = "0 12px 48px -8px rgba(37,99,235,0.6)"
+                                e.currentTarget.style.transform = "translateY(-3px) scale(1.02)"
+                                e.currentTarget.style.backgroundPosition = "right center"
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.boxShadow = "0 8px 32px -8px rgba(37,99,235,0.4)"
+                                e.currentTarget.style.transform = "translateY(0) scale(1)"
+                                e.currentTarget.style.backgroundPosition = "left center"
+                            }}
                         >
                             View Our Work
                         </a>
                         <a
-                            href="#contact"
-                            className="inline-flex items-center justify-center px-6 py-3 bg-transparent hover:bg-white/[0.05] text-zinc-300 hover:text-white text-sm font-medium tracking-wide rounded-lg border border-white/10 hover:border-white/20 transition-all duration-200 hover:-translate-y-px active:translate-y-0"
+                            href="mailto:contact@codeh.com"
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                padding: "14px 28px",
+                                background: "rgba(255,255,255,0.03)",
+                                color: "#f8fafc",
+                                fontSize: "0.875rem",
+                                fontWeight: 600,
+                                letterSpacing: "0.02em",
+                                borderRadius: "12px",
+                                border: "1px solid rgba(255,255,255,0.08)",
+                                textDecoration: "none",
+                                transition: "all 0.4s cubic-bezier(0.16,1,0.3,1)",
+                                backdropFilter: "blur(12px)",
+                                WebkitBackdropFilter: "blur(12px)",
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"
+                                e.currentTarget.style.background = "rgba(255,255,255,0.06)"
+                                e.currentTarget.style.transform = "translateY(-3px) scale(1.02)"
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"
+                                e.currentTarget.style.background = "rgba(255,255,255,0.03)"
+                                e.currentTarget.style.transform = "translateY(0) scale(1)"
+                            }}
                         >
                             Start a Project
                         </a>
                     </div>
-                </div>
+                </motion.div>
 
-                {/* ── Right: 3D canvas — scales down + shifts right on scroll ── */}
+                {/* ── Right: 3D canvas ── */}
                 <div
                     style={{
                         height: "min(60vw, 540px)",
@@ -129,8 +218,37 @@ const HeroSection = () => {
                 >
                     <HeroScene />
                 </div>
-
             </div>
+
+            {/* ── Scroll indicator ── */}
+            <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: t < 0.15 ? 0.5 : 0 }}
+                transition={{ delay: 1.5, duration: 0.6 }}
+                style={{
+                    position: "absolute",
+                    bottom: "32px",
+                    left: "50%",
+                    transform: "translateX(-50%)",
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    gap: "8px",
+                }}
+            >
+                <span style={{ fontSize: "0.65rem", letterSpacing: "0.15em", color: "#64748b", textTransform: "uppercase" }}>
+                    Scroll
+                </span>
+                <motion.div
+                    animate={{ y: [0, 8, 0] }}
+                    transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                    style={{
+                        width: "1px",
+                        height: "24px",
+                        background: "linear-gradient(180deg, #64748b, transparent)",
+                    }}
+                />
+            </motion.div>
         </section>
     )
 }

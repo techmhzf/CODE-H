@@ -1,7 +1,6 @@
-// TechStackSection.jsx — Horizontal scrolling marquee of technologies
+// TechStackSection.jsx — Dual-row opposing marquee with icon glow effects
+import { motion } from "framer-motion"
 import { useScrollReveal } from "../hooks/useScrollReveal"
-
-const EASE = "cubic-bezier(0.16, 1, 0.3, 1)"
 
 /* ─── Inline SVG brand-style icons ─── */
 const icons = {
@@ -58,13 +57,11 @@ const icons = {
     ),
 }
 
-const techs = ["React", "Node.js", "MongoDB", "Express", "Three.js", "Vercel", "AWS", "Python"]
-
+const techsRow1 = ["React", "Node.js", "MongoDB", "Express", "Three.js", "Vercel", "AWS", "Python"]
 const TechStackSection = () => {
     const { ref, isVisible: visible } = useScrollReveal({ threshold: 0.15 })
 
-    // Duplicate for seamless loop
-    const marqueeItems = [...techs, ...techs]
+    const marqueeItems = [...techsRow1, ...techsRow1]
 
     return (
         <>
@@ -73,13 +70,26 @@ const TechStackSection = () => {
                     0% { transform: translateX(0); }
                     100% { transform: translateX(-50%); }
                 }
+                @keyframes marqueeScrollReverse {
+                    0% { transform: translateX(-50%); }
+                    100% { transform: translateX(0); }
+                }
                 .marquee-track {
                     display: flex;
-                    gap: 24px;
-                    animation: marqueeScroll 30s linear infinite;
+                    gap: 20px;
+                    animation: marqueeScroll 45s linear infinite;
                     width: max-content;
                 }
                 .marquee-track:hover {
+                    animation-play-state: paused;
+                }
+                .marquee-track-reverse {
+                    display: flex;
+                    gap: 20px;
+                    animation: marqueeScrollReverse 40s linear infinite;
+                    width: max-content;
+                }
+                .marquee-track-reverse:hover {
                     animation-play-state: paused;
                 }
                 .tech-chip {
@@ -87,37 +97,56 @@ const TechStackSection = () => {
                     align-items: center;
                     gap: 14px;
                     padding: 16px 28px;
-                    background: #111116;
-                    border: 1px solid rgba(255,255,255,0.06);
+                    background: var(--bg-card);
+                    border: 1px solid var(--border-subtle);
                     border-radius: 12px;
                     white-space: nowrap;
                     cursor: default;
                     transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
                     flex-shrink: 0;
+                    position: relative;
+                    overflow: hidden;
+                }
+                .tech-chip::before {
+                    content: '';
+                    position: absolute;
+                    inset: 0;
+                    border-radius: 12px;
+                    background: radial-gradient(circle at 50% 50%, rgba(59,130,246,0.06) 0%, transparent 70%);
+                    opacity: 0;
+                    transition: opacity 0.4s ease;
+                }
+                .tech-chip:hover::before {
+                    opacity: 1;
                 }
                 .tech-chip:hover {
-                    background: #1a1a24;
-                    border-color: rgba(37,99,235,0.35);
-                    box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 16px rgba(37,99,235,0.06);
+                    background: var(--bg-card-hover);
+                    border-color: var(--border-hover);
+                    box-shadow: 0 8px 28px rgba(0,0,0,0.3), 0 0 20px rgba(37,99,235,0.08);
                     transform: translateY(-3px);
                 }
                 .tech-chip .chip-icon {
-                    color: #64748b;
+                    color: var(--text-dim);
                     line-height: 0;
-                    transition: color 0.3s ease;
+                    transition: color 0.3s ease, filter 0.3s ease;
+                    position: relative;
+                    z-index: 1;
                 }
                 .tech-chip:hover .chip-icon {
                     color: #3b82f6;
+                    filter: drop-shadow(0 0 6px rgba(59,130,246,0.3));
                 }
                 .tech-chip .chip-label {
                     font-size: 0.88rem;
                     font-weight: 500;
                     letter-spacing: 0.02em;
-                    color: #94a3b8;
+                    color: var(--text-muted);
                     transition: color 0.3s ease;
+                    position: relative;
+                    z-index: 1;
                 }
                 .tech-chip:hover .chip-label {
-                    color: #f8fafc;
+                    color: var(--text-primary);
                 }
             `}</style>
 
@@ -125,21 +154,17 @@ const TechStackSection = () => {
                 ref={ref}
                 id="tech-stack"
                 style={{
-                    backgroundColor: "#0a0a0f",
+                    backgroundColor: "var(--bg-primary)",
                     padding: "80px 0",
-                    borderTop: "1px solid rgba(255,255,255,0.03)",
                     overflow: "hidden",
                 }}
             >
-                {/* Header — with side padding */}
-                <div
-                    style={{
-                        padding: "0 7vw",
-                        opacity: visible ? 1 : 0,
-                        transform: visible ? "translateY(0)" : "translateY(20px)",
-                        transition: `opacity 0.9s ${EASE}, transform 0.9s ${EASE}`,
-                        marginBottom: "48px",
-                    }}
+                {/* Header */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={visible ? { opacity: 1, y: 0 } : {}}
+                    transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                    style={{ padding: "0 7vw", marginBottom: "48px" }}
                 >
                     <p
                         style={{
@@ -148,7 +173,7 @@ const TechStackSection = () => {
                             fontWeight: 600,
                             letterSpacing: "0.2em",
                             textTransform: "uppercase",
-                            color: "#94a3b8",
+                            color: "var(--text-muted)",
                         }}
                     >
                         Built With
@@ -167,13 +192,13 @@ const TechStackSection = () => {
                     >
                         Technology Stack
                     </h2>
-                </div>
+                </motion.div>
 
-                {/* Marquee — full width, no side padding */}
+                {/* Marquee — single row */}
                 <div
                     style={{
                         opacity: visible ? 1 : 0,
-                        transition: `opacity 1.2s ${EASE} 0.2s`,
+                        transition: "opacity 1.2s cubic-bezier(0.16,1,0.3,1) 0.2s",
                         maskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
                         WebkitMaskImage: "linear-gradient(90deg, transparent, black 8%, black 92%, transparent)",
                     }}
