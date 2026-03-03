@@ -1,111 +1,127 @@
-import { useRef, useEffect } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { useGLTF, MeshTransmissionMaterial, Environment } from '@react-three/drei'
+import { useRef, useEffect, useState } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Edges } from '@react-three/drei'
 import * as THREE from 'three'
 
-// The actual rotating cube mesh
-function Cube({ mouse }) {
-    const meshRef = useRef()
+// Hollow wireframe cube — edges only, interactive
+function Cube({ mouse, dragging, dragDelta }) {
     const groupRef = useRef()
+    const innerRef = useRef()
+    const baseRotation = useRef({ x: 0.4, y: 0.4 })
 
     useFrame((state, delta) => {
-        if (!meshRef.current || !groupRef.current) return
+        if (!groupRef.current) return
 
-        // Slow base rotation
-        meshRef.current.rotation.y += delta * 0.18
-        meshRef.current.rotation.x += delta * 0.06
+        // Continuous slow spin for outer group
+        baseRotation.current.y += delta * 0.25
+        baseRotation.current.x += delta * 0.08
 
-        // Mouse parallax tilt on the group
-        const targetX = (mouse.current.y * -0.25)
-        const targetY = (mouse.current.x * 0.25)
-        groupRef.current.rotation.x += (targetX - groupRef.current.rotation.x) * 0.05
-        groupRef.current.rotation.y += (targetY - groupRef.current.rotation.y) * 0.05
+        if (dragging.current) {
+            baseRotation.current.x += dragDelta.current.y * 0.008
+            baseRotation.current.y += dragDelta.current.x * 0.008
+            dragDelta.current.x = 0
+            dragDelta.current.y = 0
+        }
+
+        // Mouse parallax
+        const parallaxX = mouse.current.y * -0.6
+        const parallaxY = mouse.current.x * 0.6
+        const targetX = baseRotation.current.x + parallaxX
+        const targetY = baseRotation.current.y + parallaxY
+
+        groupRef.current.rotation.x += (targetX - groupRef.current.rotation.x) * 0.08
+        groupRef.current.rotation.y += (targetY - groupRef.current.rotation.y) * 0.08
+
+        // Inner cube — spins independently (opposite + faster)
+        if (innerRef.current) {
+            innerRef.current.rotation.y -= delta * 0.5
+            innerRef.current.rotation.x += delta * 0.3
+        }
     })
 
     return (
         <group ref={groupRef}>
-            <mesh ref={meshRef} castShadow>
-                {/* Slightly bevelled box via subdivisions */}
+            {/* Outer cube */}
+            <mesh>
                 <boxGeometry args={[2, 2, 2]} />
-                <meshStandardMaterial
-                    color="#1a1a1f"
-                    metalness={0.95}
-                    roughness={0.15}
-                    envMapIntensity={1.2}
+                <meshBasicMaterial transparent opacity={0} />
+                <Edges
+                    threshold={15}
+                    lineWidth={1.5}
+                    color="#94a3b8"
                 />
             </mesh>
 
-            {/* Inner wireframe overlay for engineering feel */}
-            <mesh ref={null}>
-                <boxGeometry args={[2.01, 2.01, 2.01]} />
-                <meshBasicMaterial
-                    color="#1e40af"
-                    wireframe
-                    transparent
-                    opacity={0.08}
+            {/* Inner cube — rotates independently */}
+            <mesh ref={innerRef}>
+                <boxGeometry args={[1.3, 1.3, 1.3]} />
+                <meshBasicMaterial transparent opacity={0} />
+                <Edges
+                    threshold={15}
+                    lineWidth={1}
+                    color="#64748b"
                 />
             </mesh>
         </group>
     )
 }
 
-// Lights setup — no neon, just a clean blue rim and soft key light
+// Minimal lighting — just enough for edge visibility
 function Lights() {
     return (
         <>
-            {/* Ambient — very dim so the metallic material reads well */}
-            <ambientLight intensity={0.15} />
-
-            {/* Top-left soft key light (cool white) */}
-            <directionalLight
-                position={[-3, 4, 3]}
-                intensity={0.8}
-                color="#c8d8f0"
-            />
-
-            {/* Blue rim light from the right-back */}
-            <pointLight
-                position={[4, 1, -3]}
-                intensity={8}
-                color="#2563eb"
-                distance={12}
-                decay={2}
-            />
-
-            {/* Very subtle warm fill from front-bottom */}
-            <pointLight
-                position={[0, -3, 3]}
-                intensity={1.5}
-                color="#a0b4cc"
-                distance={10}
-                decay={2}
-            />
+            <ambientLight intensity={0.5} />
+            <directionalLight position={[-3, 4, 3]} intensity={0.4} color="#e2e8f0" />
         </>
     )
 }
 
 export default function HeroScene() {
     const mouse = useRef({ x: 0, y: 0 })
+    const dragging = useRef(false)
+    const dragDelta = useRef({ x: 0, y: 0 })
+    const lastMouse = useRef({ x: 0, y: 0 })
 
     useEffect(() => {
         const handleMouseMove = (e) => {
-            // Normalise to -1 … +1
             mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1
             mouse.current.y = (e.clientY / window.innerHeight) * 2 - 1
+
+            if (dragging.current) {
+                dragDelta.current.x = e.clientX - lastMouse.current.x
+                dragDelta.current.y = e.clientY - lastMouse.current.y
+                lastMouse.current.x = e.clientX
+                lastMouse.current.y = e.clientY
+            }
         }
+        const handleMouseDown = (e) => {
+            dragging.current = true
+            lastMouse.current.x = e.clientX
+            lastMouse.current.y = e.clientY
+        }
+        const handleMouseUp = () => {
+            dragging.current = false
+        }
+
         window.addEventListener('mousemove', handleMouseMove)
-        return () => window.removeEventListener('mousemove', handleMouseMove)
+        window.addEventListener('mousedown', handleMouseDown)
+        window.addEventListener('mouseup', handleMouseUp)
+        return () => {
+            window.removeEventListener('mousemove', handleMouseMove)
+            window.removeEventListener('mousedown', handleMouseDown)
+            window.removeEventListener('mouseup', handleMouseUp)
+        }
     }, [])
 
     return (
         <Canvas
             camera={{ position: [0, 0, 5.5], fov: 42 }}
             gl={{ antialias: true, alpha: true }}
-            style={{ background: 'transparent' }}
+            style={{ background: 'transparent', cursor: 'grab' }}
             dpr={[1, 2]}
         >
             <Lights />
-            <Cube mouse={mouse} />
+            <Cube mouse={mouse} dragging={dragging} dragDelta={dragDelta} />
         </Canvas>
     )
 }
